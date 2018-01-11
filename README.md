@@ -175,7 +175,7 @@ hubot onto Windows][deploy-windows] wiki pages.
 ### Deploying with nginx
 
 Messages to the server from mattermost will need to be sent over HTTPS listening on port 443
-and passed onto hubot, listening on port 8080. Below is an example server block used by nginx.
+and passed onto hubot, running on localhost (127.0.0.1) listening on port 8080. Below is an example server block used by nginx.
 In this example, the source code for hubot will live in the directory `/var/www/example.com`.
 ```
 server {
