@@ -127,7 +127,7 @@ sudo systemctl start redis
 ```
 
 By default, Redis will be listening on port 6379 and bound to localhost, meaning
-it will be able to accept connections only from clients running into the same computer it
+it will be able to accept connections only from a hubot running on the same computer it
 is running. The conf file is default located in `/etc/redis.conf`.
 
 To verify that Redis is running you can try `redis-cli ping` which should 
@@ -140,7 +140,7 @@ from `external-scripts.json` and you don't need to worry about redis at all.
 ## Adapters
 
 Adapters are the interface to the service you want your hubot to run on, such
-as Campfire or IRC. There are a number of third party adapters that the
+as Campfire or IRC or Mattermost. There are a number of third party adapters that the
 community have contributed. Check [Hubot Adapters][hubot-adapters] for the
 available ones.
 
