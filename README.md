@@ -245,5 +245,3 @@ Start the service with `sudo systemctl start examplebot.service`
 
 Use `sudo systemctl restart examplebot.service`.
 
-You may want to get comfortable with `heroku logs` and `heroku restart` if
-you're having issues.
