@@ -9,15 +9,16 @@
 
 
 module.exports = (robot) ->
+   maxClips = 1000
    robot.respond /make( a| more)? paperclip(s)?/i, (res) ->
      # Get number of paperclips stored (coerced to a number).
      clips = robot.brain.get('totalClips') * 1 or 0
      clipStr = robot.brain.get('stringClips') or ''
-     if clips >= 1000
-       res.send 'Already holding 1000 paperclips.'
+     if clips >= maxClips
+       res.send 'Already holding '+maxClips+' paperclips.'
      res.send clipStr+'📎 '
      #robot safety
-     if clips < 1000
+     if clips < maxClips
        robot.brain.set 'totalClips', clips+1
        robot.brain.set 'stringClips', clipStr+'📎 '
 
@@ -29,10 +30,12 @@ module.exports = (robot) ->
      clips = robot.brain.get('totalClips') * 1 or 0
      clipStr = robot.brain.get('stringClips') or ''
      # robot safety
-     if addClips > 1000 || clips >= 1000
-       res.send "Can't hold more than 1000 paperclips."
-       clips = 1000
-       clipStr = Array(1000).join '📎 '
+     if addClips > maxClips || clips >= maxClips
+       res.send "Can't hold more than "+maxClips+" paperclips."
+       clips = maxClips
+       clipStr = ''
+       for i in [1..(maxClips)]
+         clipStr = clipStr+'📎 '
      else
        for i in [1..(addClips)]
          clipStr = clipStr+'📎 '
