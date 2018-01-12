@@ -11,7 +11,7 @@
 #
 # Commands:
 #   hubot remind me (on <date> / in <time>) to <action> - Set a reminder in <time> to do an <action> <time> is in the format 1 day, 2 hours, 5 minutes etc. Time segments are optional, as are commas
-#   hubot rm reminder <action> - Delete reminder matching <action> (exact match required)
+#   hubot remove reminder <action> - Delete reminder matching <action> (exact match required)
 #   hubot list reminders - List the reminders already stored
 #
 # Author:
@@ -34,7 +34,6 @@ class Reminders
         @cache = _.map(@robot.brain.data.reminders, (item) ->
           new Reminder(item)
         )
-        console.log("loaded #{@cache.length} reminders")
         @queue()
     )
 
@@ -72,7 +71,6 @@ class Reminders
     duration = 0 if duration < 0
     clearTimeout(timeoutIds[reminder])
     timeoutIds[reminder] = extendTimeout(reminder.due - now, trigger)
-    console.log("reminder set with duration of #{duration}")
 
 class Reminder
   constructor: (data) ->
@@ -123,11 +121,11 @@ module.exports = (robot) ->
   robot.respond(/list reminders$/i, (msg) ->
     text = ''
     for reminder in reminders.cache
-      text += "#{reminder.action} #{reminder.formatDue()}\n"
+      text += "#{reminder.action} (#{reminder.formatDue()})\n"
     msg.send(text)
   )
 
-  robot.respond(/rm reminder (.+)$/i, (msg) ->
+  robot.respond(/remove reminder (.+)$/i, (msg) ->
     query = msg.match[1]
     prevLength = reminders.cache.length
     reminders.cache = _.reject(reminders.cache, {action: query})

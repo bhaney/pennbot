@@ -160,18 +160,6 @@ Pennbot is using the `hubot-mattermost` adapter found [here][hubot-mattermost].
 [hubot-adapters]: https://github.com/github/hubot/blob/master/docs/adapters.md
 [hubot-mattermost]: https://github.com/renanvicente/hubot-mattermost
 
-
-### Deploying to UNIX or Windows
-
-If you would like to deploy to either a UNIX operating system or Windows.
-Please check out the [deploying hubot onto UNIX][deploy-unix] and [deploying
-hubot onto Windows][deploy-windows] wiki pages.
-
-[heroku-node-docs]: http://devcenter.heroku.com/articles/node-js
-[deploy-heroku]: https://github.com/github/hubot/blob/master/docs/deploying/heroku.md
-[deploy-unix]: https://github.com/github/hubot/blob/master/docs/deploying/unix.md
-[deploy-windows]: https://github.com/github/hubot/blob/master/docs/deploying/windows.md
-
 ### Deploying with nginx
 
 Messages to the server from mattermost will need to be sent over HTTPS listening on port 443
@@ -203,8 +191,20 @@ server {
 }
 ```
 
+### Deploying to UNIX or Windows
 
-### Creating a bot service with systemd
+If you would like to deploy to either a UNIX operating system or Windows.
+Please check out the [deploying hubot onto UNIX][deploy-unix] and [deploying
+hubot onto Windows][deploy-windows] wiki pages.
+
+[heroku-node-docs]: http://devcenter.heroku.com/articles/node-js
+[deploy-heroku]: https://github.com/github/hubot/blob/master/docs/deploying/heroku.md
+[deploy-unix]: https://github.com/github/hubot/blob/master/docs/deploying/unix.md
+[deploy-windows]: https://github.com/github/hubot/blob/master/docs/deploying/windows.md
+
+
+
+### Creating a service with systemd
 
 You can use systemd on CentOS to keep hubot running in the background. Below
 is an example file `/etc/systemd/system/examplebot.service`.
