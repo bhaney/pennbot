@@ -15,7 +15,7 @@ module.exports = (robot) ->
      clips = robot.brain.get('totalClips') * 1 or 0
      clipStr = robot.brain.get('stringClips') or ''
      if clips >= maxClips
-       res.send 'Already holding '+maxClips+' paperclips.'
+       res.send "I'm already holding '+maxClips+' paperclips."
      res.send clipStr+'📎 '
      #robot safety
      if clips < maxClips
