@@ -6,7 +6,11 @@
 #   wouldn't be useful and amusing enough for day to day huboting.
 #   Uncomment the ones you want to try and experiment with.
 #
-#   These are from the scripting documentation: https://github.com/github/hubot/blob/master/docs/scripting.md
+#Commands:
+#   hubot roll a die - Roll a six-sided die.
+#   hubot flip a coin - Flip a coin.
+#   hubot (what's for lunch / where should I eat ) - Selects a place to get lunch.
+#
 
 module.exports = (robot) ->
 #   robot.hear /badger/i, (res) ->
@@ -22,10 +26,72 @@ module.exports = (robot) ->
 #   robot.hear /I like pie/i, (res) ->
 #     res.emote "makes a freshly baked pie"
 #  
-#   lulz = ['lol', 'rofl', 'lmao']
-#  
-#   robot.respond /lulz/i, (res) ->
-#     res.send res.random lulz
+   thanks = ["you're welcome!", "😊 ", 'no problem']
+  
+   robot.hear /thanks (pennbot|pb).*/i, (res) ->
+     res.send res.random thanks
+
+   robot.respond /thanks.*/i, (res) ->
+     res.send res.random thanks
+
+# food recommender 
+   food = ["Lovash", "Lovash", "MexiCali", "Mexicali", "Rice under lamb", "Magic Carpet", "Dos Hermanos", "Dos Hermanos", "Old Nelson", "Decide for yourself.", "Tilapia burrito"]
+
+   robot.respond /(where|what) should .* eat.*/i, (res) ->
+     day = new Date
+     today = day.getDay()
+     todayDate = day.getDate()
+     storedDay = robot.brain.get('foodDay') or todayDate
+     storedFood = robot.brain.get('foodRec') or 'Mexicali'
+     if today == 1
+       res.send "HEP Lunch"
+     else if storedDay == todayDate
+       res.send "I've already said "+storedFood
+     else
+       todayFoodRec = res.random food
+       res.send todayFoodRec
+       robot.brain.set 'foodDay', todayDate
+       robot.brain.set 'foodRec', todayFoodRec
+
+   robot.respond /(where|what) should .* lunch.*/i, (res) ->
+     day = new Date
+     today = day.getDay()
+     todayDate = day.getDate()
+     storedDay = robot.brain.get('foodDay') or todayDate
+     storedFood = robot.brain.get('foodRec') or 'Mexicali'
+     if today == 1
+       res.send "HEP Lunch"
+     else if storedDay == todayDate
+       res.send "I've already said "+storedFood
+     else
+       todayFoodRec = res.random food
+       res.send todayFoodRec
+       robot.brain.set 'foodDay', todayDate
+       robot.brain.set 'foodRec', todayFoodRec
+
+   robot.respond /what('s|s| is) for lunch.*/i, (res) ->
+     day = new Date
+     today = day.getDay()
+     todayDate = day.getDate()
+     storedDay = robot.brain.get('foodDay') or todayDate
+     storedFood = robot.brain.get('foodRec') or 'Mexicali'
+     if today == 1
+       res.send "HEP Lunch"
+     else if storedDay == todayDate
+       res.send "I've already said "+storedFood
+     else
+       todayFoodRec = res.random food
+       res.send todayFoodRec
+       robot.brain.set 'foodDay', todayDate
+       robot.brain.set 'foodRec', todayFoodRec
+
+   coin = ["Heads","Tails"]
+   robot.respond /flip a coin/i, (res) ->
+     res.send res.random coin
+
+   dice = ["One","Two","Three","Four","Five","Six"]
+   robot.respond /roll a dice/i, (res) ->
+     res.send res.random dice
 #  
 #   robot.topic (res) ->
 #     res.send "#{res.message.text}? That's a Paddlin'"
