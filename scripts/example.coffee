@@ -29,6 +29,7 @@ module.exports = (robot) ->
 
 # food recommender 
    food = ["Lovash", "Lovash", "MexiCali", "Mexicali", "Rice under lamb", "Magic Carpet", "Dos Hermanos", "Dos Hermanos", "Old Nelson", "Decide for yourself.", "Cucina Zapata"]
+   food2 = ["MexiCali", "Dos Hermanos", "Admiral Nelson", "Drexel trucks", "Spruce Street trucks"]
 
    robot.respond /(where|what) should .* eat.*/i, (res) ->
      day = new Date
@@ -77,6 +78,20 @@ module.exports = (robot) ->
        res.send todayFoodRec
        robot.brain.set 'foodDay', todayDate
        robot.brain.set 'foodRec', todayFoodRec
+
+   robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
+     day = new Date
+     today = day.getDay()
+     todayDate = day.getDate()
+     storedDay = robot.brain.get('food2Day') or todayDate
+     storedFood = robot.brain.get('food2Rec') or 'Mexicali'
+     if storedDay == todayDate
+       res.send "I've already said "+storedFood
+     else
+       todayFoodRec = res.random food2
+       res.send todayFoodRec
+       robot.brain.set 'food2Day', todayDate
+       robot.brain.set 'food2Rec', todayFoodRec
 
    coin = ["Heads","Tails"]
    robot.respond /flip a coin/i, (res) ->
