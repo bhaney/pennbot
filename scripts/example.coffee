@@ -10,19 +10,9 @@
 #   hubot roll a die - Roll a six-sided die.
 #   hubot flip a coin - Flip a coin.
 #   hubot (what's for lunch / where should I eat ) - Selects a place to get lunch.
-#
+#   hubot where is your souce / where do you live - link to pennbot's github repo.
 
 module.exports = (robot) ->
-#   robot.hear /badger/i, (res) ->
-#     res.send "Badgers? BADGERS? WE DON'T NEED NO STINKIN BADGERS"
-#  
-#   robot.respond /open the (.*) doors/i, (res) ->
-#     doorType = res.match[1]
-#     if doorType is "pod bay"
-#       res.reply "I'm afraid I can't let you do that."
-#     else
-#       res.reply "Opening #{doorType} doors"
-#  
 #   robot.hear /I like pie/i, (res) ->
 #     res.emote "makes a freshly baked pie"
 #  
@@ -34,8 +24,11 @@ module.exports = (robot) ->
    robot.respond /thanks.*/i, (res) ->
      res.send res.random thanks
 
+   robot.hear /(how do I fix you|where is your source|where do you live).*/i, (res) ->
+     res.send 'https://github.com/bhaney/pennbot'
+
 # food recommender 
-   food = ["Lovash", "Lovash", "MexiCali", "Mexicali", "Rice under lamb", "Magic Carpet", "Dos Hermanos", "Dos Hermanos", "Old Nelson", "Decide for yourself.", "Tilapia burrito"]
+   food = ["Lovash", "Lovash", "MexiCali", "Mexicali", "Rice under lamb", "Magic Carpet", "Dos Hermanos", "Dos Hermanos", "Old Nelson", "Decide for yourself.", "Cucina Zapata"]
 
    robot.respond /(where|what) should .* eat.*/i, (res) ->
      day = new Date
@@ -90,8 +83,20 @@ module.exports = (robot) ->
      res.send res.random coin
 
    dice = ["One","Two","Three","Four","Five","Six"]
-   robot.respond /roll a dice/i, (res) ->
+   robot.respond /roll a die/i, (res) ->
      res.send res.random dice
+   robot.respond /roll .* dice/i, (res) ->
+     res.send res.random dice
+#  
+#   robot.hear /badger/i, (res) ->
+#     res.send "Badgers? BADGERS? WE DON'T NEED NO STINKIN BADGERS"
+#  
+#   robot.respond /open the (.*) doors/i, (res) ->
+#     doorType = res.match[1]
+#     if doorType is "pod bay"
+#       res.reply "I'm afraid I can't let you do that."
+#     else
+#       res.reply "Opening #{doorType} doors"
 #  
 #   robot.topic (res) ->
 #     res.send "#{res.message.text}? That's a Paddlin'"
