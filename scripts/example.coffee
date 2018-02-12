@@ -31,23 +31,7 @@ module.exports = (robot) ->
    food = ["Lovash", "Lovash", "MexiCali", "Mexicali", "Rice under lamb", "Magic Carpet", "Dos Hermanos", "Dos Hermanos", "Old Nelson", "Decide for yourself.", "Cucina Zapata"]
    food2 = ["MexiCali", "Dos Hermanos", "Admiral Nelson", "Drexel trucks", "Spruce Street trucks"]
 
-   robot.respond /(where|what) should .* eat.*/i, (res) ->
-     day = new Date
-     today = day.getDay()
-     todayDate = day.getDate()
-     storedDay = robot.brain.get('foodDay') or todayDate
-     storedFood = robot.brain.get('foodRec') or 'Mexicali'
-     if today == 1
-       res.send "HEP Lunch"
-     else if storedDay == todayDate
-       res.send "I've already said "+storedFood
-     else
-       todayFoodRec = res.random food
-       res.send todayFoodRec
-       robot.brain.set 'foodDay', todayDate
-       robot.brain.set 'foodRec', todayFoodRec
-
-   robot.respond /(where|what) should .* lunch.*/i, (res) ->
+   robot.respond /(where|what) should .* (eat|lunch).*/i, (res) ->
      day = new Date
      today = day.getDay()
      todayDate = day.getDate()
