@@ -29,7 +29,7 @@ module.exports = (robot) ->
 
 # food recommender 
    food = ["Lovash", "Lovash", "MexiCali", "Mexicali", "Rice under lamb", "Magic Carpet", "Dos Hermanos", "Dos Hermanos", "Old Nelson", "Decide for yourself.", "Cucina Zapata"]
-   food2 = ["Magic Carpet"]
+   food2 = food
 
    robot.respond /(what('s|s| is) for lunch.*|(where|what) should .* (eat|lunch).*)/i, (res) ->
      day = new Date
