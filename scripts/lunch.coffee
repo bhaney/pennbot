@@ -35,7 +35,7 @@ module.exports = (robot) ->
        robot.brain.set 'foodDay', todayDate
        robot.brain.set 'foodRec', todayFoodRec
 
-   robot.respond /nominate (.*) for lunch.*/i, (res) ->
+   robot.respond /nominate (.*) for( the)? lunch( list)?.*/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('nomineeList')
        robot.brain.set 'nomineeList', {}
@@ -59,7 +59,7 @@ module.exports = (robot) ->
        delete nomineeList[nominee]
      robot.brain.set 'nomineeList', nomineeList
      
-   robot.respond /remove (.*) from( the)? lunch list.*/i, (res) ->
+   robot.respond /remove (.*) from( the)? lunch( list)?.*/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('denominateList')
        robot.brain.set 'denominateList', {}
