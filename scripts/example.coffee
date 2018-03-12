@@ -9,12 +9,8 @@
 #Commands:
 #   hubot roll a die - Roll a six-sided die.
 #   hubot flip a coin - Flip a coin.
-#   hubot (what's for lunch / where should I eat ) - Selects a place to get lunch.
-#   hubot where is your souce / where do you live - link to pennbot's github repo.
 
 module.exports = (robot) ->
-#   robot.hear /I like pie/i, (res) ->
-#     res.emote "makes a freshly baked pie"
 #  
    thanks = ["you're welcome!", "😊 ", 'no problem']
   
@@ -27,50 +23,6 @@ module.exports = (robot) ->
    robot.hear /(how do I fix you|where is your source|where do you live).*/i, (res) ->
      res.send 'https://github.com/bhaney/pennbot'
 
-# food recommender 
-   food = ["Lovash", "Lovash", "MexiCali", "Mexicali", "Rice under lamb", "Magic Carpet", "Dos Hermanos", "Dos Hermanos", "Old Nelson", "Decide for yourself.", "Cucina Zapata"]
-   food2 = food
-
-   robot.respond /(what('s|s| is) for lunch.*|(where|what) should .* (eat|lunch).*)/i, (res) ->
-     day = new Date
-     today = day.getDay()
-     todayDate = day.getDate()
-     #intialize the varible if it doesn't exist
-     if !robot.brain.get('foodRec')
-       robot.brain.set 'foodDay', 0
-       robot.brain.set 'foodRec', res.random food
-     #compare stored day with today's date
-     storedDay = robot.brain.get('foodDay')
-     storedFood = robot.brain.get('foodRec')
-     if today == 1
-       res.send "HEP Lunch"
-     else if storedDay == todayDate
-       res.send "I've already said "+storedFood
-     else
-       todayFoodRec = res.random food
-       res.send todayFoodRec
-       robot.brain.set 'foodDay', todayDate
-       robot.brain.set 'foodRec', todayFoodRec
-
-   robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
-     day = new Date
-     today = day.getDay()
-     todayDate = day.getDate()
-     #intialize the varible if it doesn't exist
-     if !robot.brain.get('food2Rec')
-       robot.brain.set 'food2Day', 0
-       robot.brain.set 'food2Rec', res.random food2
-     #compare stored day with today's date
-     storedDay = robot.brain.get('food2Day') 
-     storedFood = robot.brain.get('food2Rec') 
-     if storedDay == todayDate
-       res.send "I've already said "+storedFood
-     else
-       todayFoodRec = res.random food2
-       res.send todayFoodRec
-       robot.brain.set 'food2Day', todayDate
-       robot.brain.set 'food2Rec', todayFoodRec
-
    coin = ["Heads","Tails"]
    robot.respond /flip a coin/i, (res) ->
      res.send res.random coin
@@ -81,6 +33,9 @@ module.exports = (robot) ->
    robot.respond /roll .* dice/i, (res) ->
      res.send res.random dice
 #  
+#   robot.hear /I like pie/i, (res) ->
+#     res.emote "makes a freshly baked pie"
+#
 #   robot.hear /badger/i, (res) ->
 #     res.send "Badgers? BADGERS? WE DON'T NEED NO STINKIN BADGERS"
 #  
