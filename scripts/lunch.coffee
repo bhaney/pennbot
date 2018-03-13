@@ -4,6 +4,7 @@
 #   hubot nominate X for lunch - adds a tally for X to be added to the lunch list.
 #   hubot remove X from the lunch list - adds a tally for X to be removed from the lunch list.
 #   hubot what's on the lunch list - list the lunch options that are saved.
+#   hubot (what / who) are the nominees for lunch - list the nominees for the lunch list and their votes.
 
 module.exports = (robot) ->
 # food recommender 
@@ -109,7 +110,8 @@ module.exports = (robot) ->
      keyArr = Object.keys(nomineeList)
      nomineeString = "Nominee list is: \n"
      for nom in keyArr
-       nomString = nom+": "+nomineeList[nom].join(', ')
+       #nomString = "**"+nom+"**: "+nomineeList[nom].join(', ')
+       nomString = "**"+nom+"**: "+nomineeList[nom].length
        nomineeString += nomString+"\n"
      res.send nomineeString
 
