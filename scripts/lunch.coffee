@@ -3,6 +3,7 @@
 #   hubot (what's for lunch / where should I eat ) - Selects a place to get lunch.
 #   hubot nominate X for lunch - adds a tally for X to be added to the lunch list.
 #   hubot remove X from the lunch list - adds a tally for X to be removed from the lunch list.
+#   hubot what's on the lunch list - list the lunch options that are saved.
 
 module.exports = (robot) ->
 # food recommender 
@@ -12,7 +13,7 @@ module.exports = (robot) ->
      food = food.map (x) -> x.toLowerCase() 
      robot.brain.set 'foodVec', food
    foodVec = robot.brain.get('foodVec')
-   food2 = food
+   food2 = foodVec
 
    robot.respond /(what('s|s| is) for lunch.*|(where|what) should .* (eat|lunch).*)/i, (res) ->
      day = new Date
@@ -46,17 +47,19 @@ module.exports = (robot) ->
      #if first time place is nominated, initialize the nominee
      if !nomineeList[nominee]
        nomineeList[nominee] = []
+     #can't vote more than once
      if user in nomineeList[nominee] 
        res.send "You've already nominated "+nominee+". It has "+nomineeList[nominee].length+" votes."
      else
        nomineeList[nominee].push user
-       res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s)."
-     #more than 5 votes adds the nominee to the lunch list
-     if nomineeList[nominee].length > 5
-       foodVec.push nominee
-       robot.brain.set 'foodVec', foodVec
-       res.send nominee+" has been added to the lunch list."
-       delete nomineeList[nominee]
+       #more than 5 votes adds the nominee to the lunch list
+       if nomineeList[nominee].length > 5
+         foodVec.push nominee
+         robot.brain.set 'foodVec', foodVec
+         res.send nominee+" has been added to the lunch list."
+         delete nomineeList[nominee]
+       else
+         res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s)."
      robot.brain.set 'nomineeList', nomineeList
      
    robot.respond /remove (.*) from( the)? lunch( list)?.*/i, (res) ->
@@ -74,20 +77,26 @@ module.exports = (robot) ->
        #if first time place is nominated, initialize the nominee
        if !nomineeList[nominee]
          nomineeList[nominee] = []
+       #can't vote more than once
        if user in nomineeList[nominee] 
          res.send "You've already nominated "+nominee+" for removal. It has "+nomineeList[nominee].length+" votes."
        else
          nomineeList[nominee].push user
-         res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s) for removal."
+         if nomineeList[nominee].length > 5
+           i = foodVec.indexOf(nominee)
+           if i is not -1
+             foodVec.splice(i, 1)
+           robot.brain.set 'foodVec', foodVec
+           res.send nominee+" has been removed from the lunch list."
+           delete nomineeList[nominee]
+         else
+           res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s) for removal."
        #more than 5 votes deletes the nominee from the lunch list
-       if nomineeList[nominee].length > 5
-         i = foodVec.indexOf(nominee)
-         if i is not -1
-           foodVec.splice(i, 1)
-         robot.brain.set 'foodVec', foodVec
-         res.send nominee+" has been removed from the lunch list."
-         delete nomineeList[nominee]
        robot.brain.set 'denominateList', nomineeList
+
+   robot.respond /what('s|s| is) on the( lunch) list.*/i, (res) ->
+     foodString = foodVec.toString()
+     res.send foodString
 
    robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
      day = new Date
