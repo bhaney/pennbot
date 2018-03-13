@@ -100,6 +100,19 @@ module.exports = (robot) ->
      foodString = foodVec.join(', ')
      res.send foodString
 
+   robot.respond /(what|who) are the nominees for( the)? lunch( list)?.*/i, (res) ->
+     #initialize nominee object if it does not exist
+     if !robot.brain.get('nomineeList')
+       robot.brain.set 'nomineeList', {}
+     #get all relevant variables
+     nomineeList = robot.brain.get('nomineeList')
+     keyArr = Object.keys(nomineeList)
+     nomineeString = "Nominee list is: \n"
+     for nom in keyArr
+       nomString = nom+": "+nomineeList[nom].join(', ')
+       nomineeString += nomString+"\n"
+     res.send nomineeString
+
    robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
      food2 = robot.brain.get('foodVec')
      day = new Date
