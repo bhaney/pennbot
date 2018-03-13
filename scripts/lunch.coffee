@@ -62,7 +62,7 @@ module.exports = (robot) ->
          res.send nominee+" has been added to the lunch list."
          delete nomineeList[nominee]
        else
-         res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s)."
+         res.send "OK. "+nominee+" has "+nomineeList[nominee].length+" vote(s)."
      robot.brain.set 'nomineeList', nomineeList
      
    robot.respond /unnominate (.*) (for|from)( the)? lunch( list)?.*/i, (res) ->
@@ -118,7 +118,7 @@ module.exports = (robot) ->
            res.send nominee+" has been removed from the lunch list."
            delete nomineeList[nominee]
          else
-           res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s) for removal."
+           res.send "OK. "+nominee+" has "+nomineeList[nominee].length+" vote(s) for removal."
        robot.brain.set 'denominateList', nomineeList
 
    robot.respond /what('s|s| is) on the( lunch) list.*/i, (res) ->
