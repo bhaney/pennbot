@@ -12,10 +12,9 @@ module.exports = (robot) ->
    if !robot.brain.get('foodVec')
      food = food.map (x) -> x.toLowerCase() 
      robot.brain.set 'foodVec', food
-   foodVec = robot.brain.get('foodVec')
-   food2 = foodVec
 
    robot.respond /(what('s|s| is) for lunch.*|(where|what) should .* (eat|lunch).*)/i, (res) ->
+     foodVec = robot.brain.get('foodVec')
      day = new Date
      today = day.getDay()
      todayDate = day.getDate()
@@ -41,6 +40,7 @@ module.exports = (robot) ->
      if !robot.brain.get('nomineeList')
        robot.brain.set 'nomineeList', {}
      #get all relevant variables
+     foodVec = robot.brain.get('foodVec')
      nomineeList = robot.brain.get('nomineeList')
      nominee = res.match[1].toLowerCase().trim()
      user = res.message.user.name
@@ -67,6 +67,7 @@ module.exports = (robot) ->
      if !robot.brain.get('denominateList')
        robot.brain.set 'denominateList', {}
      #get all relevant variables
+     foodVec = robot.brain.get('foodVec')
      nomineeList = robot.brain.get('denominateList')
      nominee = res.match[1].toLowerCase().trim()
      user = res.message.user.name
@@ -95,10 +96,12 @@ module.exports = (robot) ->
        robot.brain.set 'denominateList', nomineeList
 
    robot.respond /what('s|s| is) on the( lunch) list.*/i, (res) ->
-     foodString = foodVec.toString()
+     foodVec = robot.brain.get('foodVec')
+     foodString = foodVec.join(', ')
      res.send foodString
 
    robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
+     food2 = robot.brain.get('foodVec')
      day = new Date
      today = day.getDay()
      todayDate = day.getDate()
