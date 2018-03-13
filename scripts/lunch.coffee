@@ -6,6 +6,7 @@
 #   hubot remove X from the lunch list - adds a tally for X to be removed from the lunch list.
 #   hubot what's on the lunch list - list the lunch options that are saved.
 #   hubot (what / who) are the nominees for lunch - list the nominees for the lunch list and their votes.
+#   hubot (what / who) is nominated for removal - list the nominees for removal and their votes.
 
 module.exports = (robot) ->
 # food recommender 
@@ -64,7 +65,7 @@ module.exports = (robot) ->
          res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s)."
      robot.brain.set 'nomineeList', nomineeList
      
-   robot.respond /unnominate (.*) for( the)? lunch( list)?.*/i, (res) ->
+   robot.respond /unnominate (.*) (for|from)( the)? lunch( list)?.*/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('nomineeList')
        robot.brain.set 'nomineeList', {}
@@ -74,7 +75,7 @@ module.exports = (robot) ->
      user = res.message.user.name
      #check if nominee exists
      if !nomineeList[nominee] or (nomineeList[nominee].length == 0)
-       res.send nominee+" hasn't been nominated by anyone."
+       res.send nominee+" hasn't been nominated for the lunch list by anyone."
      #find user's vote, and remove it.
      else
        i = nomineeList[nominee].indexOf(user)
@@ -85,7 +86,7 @@ module.exports = (robot) ->
            delete nomineeList[nominee]
          robot.brain.set 'nomineeList', nomineeList
        else
-         res.send "You have not nominated "+nominee+"."
+         res.send "You have not nominated "+nominee+". You can only un-nominate your own votes. If you would like to remove an entry from the lunch list, use 'remove X from the lunch list'"
 
    robot.respond /remove (.*) from( the)? lunch( list)?.*/i, (res) ->
      #initialize nominee object if it does not exist
@@ -134,8 +135,22 @@ module.exports = (robot) ->
      keyArr = Object.keys(nomineeList)
      nomineeString = "Nominee list is: \n"
      for nom in keyArr
-       #nomString = "**"+nom+"**: "+nomineeList[nom].join(', ')
-       nomString = "**"+nom+"**: "+nomineeList[nom].length
+       nomString = "**"+nom+"**: "+nomineeList[nom].join(', ')
+       #nomString = "**"+nom+"**: "+nomineeList[nom].length
+       nomineeString += nomString+"\n"
+     res.send nomineeString
+
+   robot.respond /(what|who) (are the nominees|is nominated)( up)? for removal( from the lunch list)?.*/i, (res) ->
+     #initialize nominee object if it does not exist
+     if !robot.brain.get('denominateList')
+       robot.brain.set 'denominateList', {}
+     #get all relevant variables
+     nomineeList = robot.brain.get('denominateList')
+     keyArr = Object.keys(nomineeList)
+     nomineeString = "Entries up for removal are: \n"
+     for nom in keyArr
+       nomString = "**"+nom+"**: "+nomineeList[nom].join(', ')
+       #nomString = "**"+nom+"**: "+nomineeList[nom].length
        nomineeString += nomString+"\n"
      res.send nomineeString
 
