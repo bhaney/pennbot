@@ -88,7 +88,7 @@ module.exports = (robot) ->
        else
          res.send "You have not nominated "+nominee+". You can only un-nominate your own votes. If you would like to remove an entry from the lunch list, use 'remove X from the lunch list'"
 
-   robot.respond /remove (.*) from( the)? lunch( list)?.*/i, (res) ->
+   robot.respond /remove (.*) (from|for)( the)? lunch( list)?.*/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('denominateList')
        robot.brain.set 'denominateList', {}
