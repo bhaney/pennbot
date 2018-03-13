@@ -49,7 +49,7 @@ module.exports = (robot) ->
        nomineeList[nominee] = []
      #can't vote more than once
      if user in nomineeList[nominee] 
-       res.send "You've already nominated "+nominee+". It has "+nomineeList[nominee].length+" votes."
+       res.send "You've already nominated "+nominee+". It has "+nomineeList[nominee].length+" vote(s)."
      else
        nomineeList[nominee].push user
        #more than 5 votes adds the nominee to the lunch list
@@ -80,9 +80,10 @@ module.exports = (robot) ->
          nomineeList[nominee] = []
        #can't vote more than once
        if user in nomineeList[nominee] 
-         res.send "You've already nominated "+nominee+" for removal. It has "+nomineeList[nominee].length+" votes."
+         res.send "You've already nominated "+nominee+" for removal. It has "+nomineeList[nominee].length+" vote(s)."
        else
          nomineeList[nominee].push user
+         #more than 5 votes deletes the nominee from the lunch list
          if nomineeList[nominee].length > 5
            i = foodVec.indexOf(nominee)
            if i is not -1
@@ -92,7 +93,6 @@ module.exports = (robot) ->
            delete nomineeList[nominee]
          else
            res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s) for removal."
-       #more than 5 votes deletes the nominee from the lunch list
        robot.brain.set 'denominateList', nomineeList
 
    robot.respond /what('s|s| is) on the( lunch) list.*/i, (res) ->
