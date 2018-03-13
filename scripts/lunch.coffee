@@ -2,6 +2,7 @@
 #Commands:
 #   hubot (what's for lunch / where should I eat ) - Selects a place to get lunch.
 #   hubot nominate X for lunch - adds a tally for X to be added to the lunch list.
+#   hubot unnominate X for lunch - remove your vote for X to be added to the lunch list.
 #   hubot remove X from the lunch list - adds a tally for X to be removed from the lunch list.
 #   hubot what's on the lunch list - list the lunch options that are saved.
 #   hubot (what / who) are the nominees for lunch - list the nominees for the lunch list and their votes.
@@ -63,6 +64,29 @@ module.exports = (robot) ->
          res.send "Your vote has been registered. "+nominee+" has "+nomineeList[nominee].length+" vote(s)."
      robot.brain.set 'nomineeList', nomineeList
      
+   robot.respond /unnominate (.*) for( the)? lunch( list)?.*/i, (res) ->
+     #initialize nominee object if it does not exist
+     if !robot.brain.get('nomineeList')
+       robot.brain.set 'nomineeList', {}
+     #get all relevant variables
+     nomineeList = robot.brain.get('nomineeList')
+     nominee = res.match[1].toLowerCase().trim()
+     user = res.message.user.name
+     #check if nominee exists
+     if !nomineeList[nominee] or (nomineeList[nominee].length == 0)
+       res.send nominee+" hasn't been nominated by anyone."
+     #find user's vote, and remove it.
+     else
+       i = nomineeList[nominee].indexOf(user)
+       if i != -1
+         nomineeList[nominee].splice(i, 1)
+         res.send "Your vote has been removed. "+nominee+" has "+nomineeList[nominee].length+" vote(s)."
+         if nomineeList[nominee].length == 0
+           delete nomineeList[nominee]
+         robot.brain.set 'nomineeList', nomineeList
+       else
+         res.send "You have not nominated "+nominee+"."
+
    robot.respond /remove (.*) from( the)? lunch( list)?.*/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('denominateList')
@@ -101,7 +125,7 @@ module.exports = (robot) ->
      foodString = foodVec.join(', ')
      res.send foodString
 
-   robot.respond /(what|who) are the nominees for( the)? lunch( list)?.*/i, (res) ->
+   robot.respond /(what|who) (are the nominees|is nominated) for( the)? lunch( list)?.*/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('nomineeList')
        robot.brain.set 'nomineeList', {}
