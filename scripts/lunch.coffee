@@ -76,8 +76,8 @@ module.exports = (robot) ->
      #check if nominee exists
      if !nomineeList[nominee] or (nomineeList[nominee].length == 0)
        res.send nominee+" hasn't been nominated for the lunch list by anyone."
-     #find user's vote, and remove it.
      else
+       #find user's vote, and remove it.
        i = nomineeList[nominee].indexOf(user)
        if i != -1
          nomineeList[nominee].splice(i, 1)
@@ -86,7 +86,7 @@ module.exports = (robot) ->
            delete nomineeList[nominee]
          robot.brain.set 'nomineeList', nomineeList
        else
-         res.send "You have not nominated "+nominee+". You can only un-nominate your own votes. If you would like to remove an entry from the lunch list, use 'remove X from the lunch list'"
+         res.send "You have not nominated "+nominee+". You can only un-nominate your own votes. If you would like to remove an entry, use 'remove X from the lunch list'"
 
    robot.respond /remove (.*) (from|for)( the)? lunch( list)?.*/i, (res) ->
      #initialize nominee object if it does not exist
