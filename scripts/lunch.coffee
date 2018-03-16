@@ -1,11 +1,11 @@
 #
 #Commands:
 #   hubot (what's for lunch / where should I eat ) - Selects a place to get lunch.
-#   hubot nominate X for lunch - adds a tally for X to be added to the lunch list.
-#   hubot unnominate X for lunch - remove your vote for X to be added to the lunch list.
-#   hubot remove X from the lunch list - adds a tally for X to be removed from the lunch list.
+#   hubot nominate <place>  - adds a tally for X to be added to the lunch list.
+#   hubot unnominate <place>  - remove your vote for X to be added to the lunch list.
+#   hubot unlunch <place> - adds a tally for X to be removed from the lunch list.
 #   hubot what's on the lunch list - list the lunch options that are saved.
-#   hubot (what / who) are the nominees for lunch - list the nominees for the lunch list and their votes.
+#   hubot (what / who) are the nominees - list the nominees for the lunch list and their votes.
 #   hubot (what / who) is nominated for removal - list the nominees for removal and their votes.
 
 module.exports = (robot) ->
@@ -38,7 +38,7 @@ module.exports = (robot) ->
        robot.brain.set 'foodDay', todayDate
        robot.brain.set 'foodRec', todayFoodRec
 
-   robot.respond /nominate (.*) for( the)? lunch( list)?.*/i, (res) ->
+   robot.respond /nominate (.*)/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('nomineeList')
        robot.brain.set 'nomineeList', {}
@@ -65,7 +65,7 @@ module.exports = (robot) ->
          res.send "OK. "+nominee+" has "+nomineeList[nominee].length+" vote(s)."
      robot.brain.set 'nomineeList', nomineeList
      
-   robot.respond /unnominate (.*) (for|from)( the)? lunch( list)?.*/i, (res) ->
+   robot.respond /unnominate (.*)/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('nomineeList')
        robot.brain.set 'nomineeList', {}
@@ -88,7 +88,7 @@ module.exports = (robot) ->
        else
          res.send "You have not nominated "+nominee+". You can only un-nominate your own votes. If you would like to remove an entry, use 'remove X from the lunch list'"
 
-   robot.respond /remove (.*) (from|for)( the)? lunch( list)?.*/i, (res) ->
+   robot.respond /unlunch (.*)/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('denominateList')
        robot.brain.set 'denominateList', {}
@@ -126,7 +126,7 @@ module.exports = (robot) ->
      foodString = foodVec.join(', ')
      res.send foodString
 
-   robot.respond /(what|who) (are the nominees|is nominated) for( the)? lunch( list)?.*/i, (res) ->
+   robot.respond /(what|who) (are the nominees|is nominated)( for lunch)?.*/i, (res) ->
      #initialize nominee object if it does not exist
      if !robot.brain.get('nomineeList')
        robot.brain.set 'nomineeList', {}
