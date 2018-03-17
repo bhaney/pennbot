@@ -4,9 +4,9 @@
 #   hubot nominate <place>  - adds a tally for X to be added to the lunch list.
 #   hubot unnominate <place>  - remove your vote for X to be added to the lunch list.
 #   hubot unlunch <place> - adds a tally for X to be removed from the lunch list.
-#   hubot what's on the lunch list - list the lunch options that are saved.
-#   hubot (what / who) is nominated - list the nominees for the lunch list and their votes.
-#   hubot (what / who) is up for removal - list the nominees for removal and their votes.
+#   hubot list lunch - list the lunch options that are saved.
+#   hubot list noms - list the nominees for the lunch list and their votes.
+#   hubot list removals - list the nominees for removal and their votes.
 
 class PlaceList
   constructor: (load_places) ->
@@ -29,6 +29,18 @@ class PlaceList
         if val.name == place_name
           return key
       return false 
+  #get name
+  getName: (place) ->
+    id = this.getId(place)
+    if !id
+      return false
+    return @places[id].name
+  #get users from list of places
+  getUsers: (place) ->
+    id = this.getId(place)
+    if !id
+      return false
+    return @places[id].users
   #removes a place, returns true is success
   removePlace: (place) ->
     id = this.getId(place)
@@ -46,12 +58,6 @@ class PlaceList
     new_id = new_list.addPlace(place_name)
     delete @places[id]
     return new_id
-  #get users from list of places
-  getUsers: (place) ->
-    id = this.getId(place)
-    if !id
-      return false
-    return @places[id].users
   #add a user to the place's user list
   addUserToPlace: (user, place) ->
     #is it place id, or place name?
@@ -73,7 +79,7 @@ class PlaceList
       return false
 
 module.exports = (robot) ->
-  NUM_VOTES = 0 #number of votes required to change lists
+  NUM_VOTES = 5 #treshold of votes required to change lists
   robot.brain.data.nominee_list or= {}
   robot.brain.data.denominate_list or= {}
   robot.brain.data.food_list or= {}
@@ -85,7 +91,7 @@ module.exports = (robot) ->
     robot.brain.set 'food2Day', -1
     robot.brain.set 'food2Rec', 'mexicali'
 
-  robot.respond /nominate (.*)/i, (res) ->
+  robot.respond /(?:nom|nominate) (.*)/i, (res) ->
     #get all relevant variables
     food_list = new PlaceList(robot.brain.data.food_list)
     nominee_list = new PlaceList(robot.brain.data.nominee_list)
@@ -96,20 +102,21 @@ module.exports = (robot) ->
     if !id
       id = nominee_list.addPlace(nominee)
     #can't vote more than once
+    name = nominee_list.getName(id)
     if user in nominee_list.getUsers(id)
-      res.send "You've already nominated "+nominee+". It has "+nominee_list.getUsers(id).length+" vote(s)."
+      res.send "You've already nominated "+name+". It has "+nominee_list.getUsers(id).length+" vote(s)."
     else
       nominee_list.addUserToPlace(user, id)
       #more than 5 votes moves the nominee to the lunch list
       if nominee_list.getUsers(id).length > NUM_VOTES
-        nominee_list.movePlaceToList(nominee, food_list)
+        nominee_list.movePlaceToList(name, food_list) #use actual name here
         robot.brain.data.food_list = food_list.places
-        res.send nominee+" has been added to the lunch list."
+        res.send name+" has been added to the lunch list."
       else
-        robot.brain.data.nominee_list = nominee_list.places
-        res.send "OK. "+nominee+" has "+nominee_list.getUsers(id).length+" vote(s)."
+        res.send "OK. "+name+" has "+nominee_list.getUsers(id).length+" vote(s)."
+      robot.brain.data.nominee_list = nominee_list.places
     
-  robot.respond /unnominate (.*)/i, (res) ->
+  robot.respond /(?:unnom|unnominate) (.*)/i, (res) ->
     #get all relevant variables
     nominee_list = new PlaceList(robot.brain.data.nominee_list)
     nominee = res.match[1].toLowerCase().trim()
@@ -120,15 +127,16 @@ module.exports = (robot) ->
       res.send nominee+" hasn't been nominated for the lunch list by anyone."
     else
       #find user's vote, and remove it.
+      name = nominee_list.getName(id)
       if nominee_list.removeUserFromPlace(user, nominee)
         if nominee_list.getUsers(id).length == 0 
-          nominee_list.removePlace(nominee)
-          res.send "Your vote has been removed. "+nominee+" has 0 vote(s)."
+          nominee_list.removePlace(id)
+          res.send "Your vote has been removed. "+name+" has 0 vote(s)."
         else
-          res.send "Your vote has been removed. "+nominee+" has "+nominee_list.getUsers(id).length+" vote(s)."
+          res.send "Your vote has been removed. "+name+" has "+nominee_list.getUsers(id).length+" vote(s)."
         robot.brain.data.nominee_list = nominee_list.places
       else
-        res.send "You have not nominated "+nominee+". You can only un-nominate your own votes. If you would like to remove an entry, use 'remove X from the lunch list'"
+        res.send "You have not nominated "+name+". You can only un-nominate your own votes. If you would like to remove an entry, use 'remove X from the lunch list'"
 
   robot.respond /unlunch (.*)/i, (res) ->
     #get all relevant variables
@@ -145,31 +153,32 @@ module.exports = (robot) ->
     if !id
       id = denominate_list.addPlace(nominee)
     #can't vote more than once
+    name = denominate_list.getName(id)
     if user in denominate_list.getUsers(id)
-      res.send "You've already nominated "+nominee+" for removal. It has "+denominate_list.getUsers(id).length+" vote(s)."
+      res.send "You've already nominated "+name+" for removal. It has "+denominate_list.getUsers(id).length+" vote(s)."
     else
       denominate_list.addUserToPlace(user, id)
       #more than 5 votes moves the nominee to the lunch list
       if denominate_list.getUsers(id).length > NUM_VOTES
-        food_list.removePlace(nominee)
+        food_list.removePlace(nominee) #need to use actual name rather than ID
         denominate_list.removePlace(id)
         robot.brain.set 'food_list', food_list
         res.send nominee+" has been removed the lunch list."
       else
-        res.send "OK. "+nominee+" has "+denominate_list.getUsers(id).length+" vote(s) for removal."
+        res.send "OK. "+name+" has "+denominate_list.getUsers(id).length+" vote(s) for removal."
     robot.brain.data.denominate_list = denominate_list.places
 
-  robot.respond /what('s|s| is) on the( lunch) list.*/i, (res) ->
+  robot.respond /(list lunch|what('s|s| is) on the( lunch) list).*/i, (res) ->
     places = robot.brain.data.food_list
     if !Object.keys(places).length
       res.send "The lunch list is empty."
     else
-      foodString = "Here it is:\n"
+      foodString = ""
       for k,v of places
         foodString += v.name+", "
       res.send foodString
 
-  robot.respond /(what|who) (are the nominees|is nominated)( for lunch)?.*/i, (res) ->
+  robot.respond /(list noms|(what|who) (are the nom(inee)?s|is nominated)( for lunch)?).*/i, (res) ->
     #get all relevant variables
     places = robot.brain.data.nominee_list
     if !Object.keys(places).length
@@ -177,11 +186,11 @@ module.exports = (robot) ->
     else
       nomineeString = "Nominee list is: \n"
       for k,v of places
-        nom = "**"+v.name+"**: "+v.users.join(', ') 
+        nom = "**"+v.name+"**: id "+v.id+" : "+v.users.join(', ') 
         nomineeString += nom+"\n"
       res.send nomineeString
 
-  robot.respond /(what|who) is up for removal( from the lunch list)?.*/i, (res) ->
+  robot.respond /(list unnoms|list removals|(what|who)( is| are) up for removal( from the lunch list)?).*/i, (res) ->
     #get all relevant variables
     places = robot.brain.data.denominate_list
     if !Object.keys(places).length
@@ -190,7 +199,7 @@ module.exports = (robot) ->
       names = ("**"+lunch.name+"**: "+lunch.users.join(', ') for lunch in places)
       nomineeString = "Entries up for removal: \n"
       for k,v of places
-        nom = "**"+v.name+"**: "+v.users.join(', ') 
+        nom = "**"+v.name+"**: id "+v.id+" : "+v.users.join(', ') 
         nomineeString += nom+"\n"
       res.send nomineeString
 
