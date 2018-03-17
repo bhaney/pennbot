@@ -168,7 +168,7 @@ module.exports = (robot) ->
         res.send "OK. "+name+" has "+denominate_list.getUsers(id).length+" vote(s) for removal."
     robot.brain.data.denominate_list = denominate_list.places
 
-  robot.respond /(list lunch|what('s|s| is) on the( lunch) list).*/i, (res) ->
+  robot.respond /((list|ls) lunch|what('s|s| is) on the( lunch) list).*/i, (res) ->
     places = robot.brain.data.food_list
     if !Object.keys(places).length
       res.send "The lunch list is empty."
@@ -178,7 +178,7 @@ module.exports = (robot) ->
         foodString += v.name+", "
       res.send foodString
 
-  robot.respond /(list noms|(what|who) (are the nom(inee)?s|is nominated)( for lunch)?).*/i, (res) ->
+  robot.respond /((list|ls) noms|(what|who) (are the nom(inee)?s|is nominated)( for lunch)?).*/i, (res) ->
     #get all relevant variables
     places = robot.brain.data.nominee_list
     if !Object.keys(places).length
@@ -190,7 +190,7 @@ module.exports = (robot) ->
         nomineeString += nom+"\n"
       res.send nomineeString
 
-  robot.respond /(list unnoms|list removals|(what|who)( is| are) up for removal( from the lunch list)?).*/i, (res) ->
+  robot.respond /((list|ls) unnoms|list removals|(what|who)( is| are) up for removal( from the lunch list)?).*/i, (res) ->
     #get all relevant variables
     places = robot.brain.data.denominate_list
     if !Object.keys(places).length
