@@ -1,9 +1,9 @@
 #
 #Commands:
 #   hubot (what's for lunch / where should I eat ) - Selects a place to get lunch.
-#   hubot nominate <place>  - adds a tally for X to be added to the lunch list.
-#   hubot unnominate <place>  - remove your vote for X to be added to the lunch list.
-#   hubot unlunch <place> - adds a tally for X to be removed from the lunch list.
+#   hubot (nom)inate <place>  - adds a tally for <place> to be added to the lunch list.
+#   hubot (unnom)inate <place>  - remove your vote for <place> to be added to the lunch list.
+#   hubot remove (nom / lunch) <place> - adds a tally for <place> to be removed from the lunch list.
 #   hubot list lunch - list the lunch options that are saved.
 #   hubot list noms - list the nominees for the lunch list and their votes.
 #   hubot list removals - list the nominees for removal and their votes.
@@ -17,7 +17,7 @@ class PlaceList
     @places = places
   #creates a new place
   addPlace: (place_name) ->
-    id = Math.floor(Math.random() * 1000000) while !id? || @places[id]  
+    id = Math.floor(Math.random() * 1000) while !id? || @places[id]  
     @places[id] = { id:id, name: place_name, users: []} 
     return id
   #gets the id for place, or returns false
@@ -79,7 +79,7 @@ class PlaceList
       return false
 
 module.exports = (robot) ->
-  NUM_VOTES = 5 #treshold of votes required to change lists
+  NUM_VOTES = 4 #treshold of votes required to change lists
   robot.brain.data.nominee_list or= {}
   robot.brain.data.denominate_list or= {}
   robot.brain.data.food_list or= {}
@@ -124,7 +124,7 @@ module.exports = (robot) ->
     id = nominee_list.getId(nominee)
     #check if nominee exists
     if !id or (nominee_list.getUsers(id).length == 0)
-      res.send nominee+" hasn't been nominated for the lunch list by anyone."
+      res.send nominee+" hasn't been nominated for the lunch list by anyone. To remove an entry, use 'rm lunch <place>'"
     else
       #find user's vote, and remove it.
       name = nominee_list.getName(id)
@@ -136,9 +136,9 @@ module.exports = (robot) ->
           res.send "Your vote has been removed. "+name+" has "+nominee_list.getUsers(id).length+" vote(s)."
         robot.brain.data.nominee_list = nominee_list.places
       else
-        res.send "You have not nominated "+name+". You can only un-nominate your own votes. If you would like to remove an entry, use 'remove X from the lunch list'"
+        res.send "You have not nominated "+name+". You can only un-nominate your own votes. If you would like to remove an entry, use 'rm lunch <place>'"
 
-  robot.respond /unlunch (.*)/i, (res) ->
+  robot.respond /(?:unlunch|(?:remove|rm) (?:nom|lunch)) (.*)/i, (res) ->
     #get all relevant variables
     food_list = new PlaceList(robot.brain.data.food_list)
     denominate_list = new PlaceList(robot.brain.data.denominate_list)

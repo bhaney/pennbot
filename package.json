@@ -8,7 +8,6 @@
     "chrono-node": "^0.1.10",
     "coffee-script": "^1.12.6",
     "hubot": "^2.19.0",
-    "hubot-brain-redis-hash": "^0.2.0",
     "hubot-conversation": "^1.1.1",
     "hubot-cron": ">= 0.1.0",
     "hubot-diagnostics": "0.0.2",
