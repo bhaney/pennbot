@@ -10,67 +10,48 @@
 
 class PlaceList
   constructor: (load_places) ->
-    @places = load_places
-  get: ->
-    return @places
-  set: (places) ->
-    @places = places
+    @places = load_places ?= {}
+  get: (id) ->
+    return @places[id]
   #creates a new place
-  addPlace: (place_name) ->
-    id = Math.floor(Math.random() * 1000) while !id? || @places[id]  
-    @places[id] = { id:id, name: place_name, users: []} 
+  add: (place_name) ->
+    id = Math.floor(Math.random() * 1000) while !id? || @places[id]
+    @places[id] = { id:id, name: place_name, users: []}
     return id
   #gets the id for place, or returns false
-  getId: (place_name) ->
-    if @places[place_name]
+  find: (place_name) ->
+    if @places[place_name]?
       return place_name
-    else
-      for key,val of @places
-        if val.name == place_name
-          return key
-      return false 
-  #get name
-  getName: (place) ->
-    id = this.getId(place)
-    if !id
-      return false
-    return @places[id].name
-  #get users from list of places
-  getUsers: (place) ->
-    id = this.getId(place)
-    if !id
-      return false
-    return @places[id].users
+    if place_name.id?
+      return place_name.id
+    for key,val of @places
+      if val.name is place_name then return val.id
+    return false
+  #return an array of names
+  list: ->
+    pla = @places
+    vec = []
+    for k,v of pla
+      vec.push v.name
+    return vec
   #removes a place, returns true is success
-  removePlace: (place) ->
-    id = this.getId(place)
-    if !id
-      return false
-    else
-      delete @places[id]
-      return true
+  remove: (place) ->
+    id = place.id
+    if !@places[id]? then return false
+    delete @places[place.id]
+    return true
   #delete place from this list, and move to new list
-  movePlaceToList: (place, new_list) ->
-    id = this.getId(place)
-    if !id
-      return false
+  moveToList: (place, new_list) ->
+    id = place.id
+    if !@places[id]? then return false
     place_name = @places[id].name
-    new_id = new_list.addPlace(place_name)
+    new_id = new_list.add(place_name)
     delete @places[id]
-    return new_id
-  #add a user to the place's user list
-  addUserToPlace: (user, place) ->
-    #is it place id, or place name?
-    id = this.getId(place)
-    if !id
-      return false
-    @places[id].users.push user
+    return true
   #add a user to the place's user list, returns true if success
   removeUserFromPlace: (user, place) ->
-    #is it place id, or place name?
-    id = this.getId(place)
-    if !id
-      return false
+    id = place.id
+    if !@places[id]? then return false
     i = @places[id].users.indexOf(user)
     if i != -1
       @places[id].users.splice(i, 1)
@@ -80,92 +61,104 @@ class PlaceList
 
 module.exports = (robot) ->
   NUM_VOTES = 4 #treshold of votes required to change lists
-  robot.brain.data.nominee_list or= {}
-  robot.brain.data.denominate_list or= {}
-  robot.brain.data.food_list or= {}
-  #intialize foodRec if it doesn't exist
-  if !robot.brain.get('foodRec')
-    robot.brain.set 'foodDay', -1
-    robot.brain.set 'foodRec', 'mexicali'
-  if !robot.brain.get('food2Rec')
-    robot.brain.set 'food2Day', -1
-    robot.brain.set 'food2Rec', 'mexicali'
+  #intialize food variables if they doesn't exist
+  robot.brain.data.nominee_list ?= {}
+  robot.brain.data.denominate_list ?= {}
+  robot.brain.data.food_list ?= {}
+  robot.brain.data.food_rec ?= 'mexicali'
+  robot.brain.data.food_day ?=  -1
+  robot.brain.data.food_rec2 ?= 'mexicali'
+  robot.brain.data.food_day2 ?=  -1
 
   robot.respond /(?:nom|nominate) (.*)/i, (res) ->
     #get all relevant variables
     food_list = new PlaceList(robot.brain.data.food_list)
     nominee_list = new PlaceList(robot.brain.data.nominee_list)
-    nominee = res.match[1].toLowerCase().trim()
+    nom = res.match[1].toLowerCase().trim()
     user = res.message.user.name
-    id = nominee_list.getId(nominee)
+    id = nominee_list.find(nom)
     #if first time place is nominated, initialize the nominee
     if !id
-      id = nominee_list.addPlace(nominee)
+      id = nominee_list.add(nom)
+    nominee = nominee_list.get(id)
     #can't vote more than once
-    name = nominee_list.getName(id)
-    if user in nominee_list.getUsers(id)
-      res.send "You've already nominated **"+name+"**. It has "+nominee_list.getUsers(id).length+" vote(s)."
+    if user in nominee.users
+      res.send "You've already nominated **"+nominee.name+"**. 
+                It has "+nominee.users.length+" vote(s)."
     else
-      nominee_list.addUserToPlace(user, id)
+      nominee.users.push user
       #more than 5 votes moves the nominee to the lunch list
-      if nominee_list.getUsers(id).length > NUM_VOTES
-        nominee_list.movePlaceToList(name, food_list) #use actual name here
-        robot.brain.data.food_list = food_list.places
+      if nominee.users.length > NUM_VOTES
+        name = nominee.name
+        test = nominee_list.moveToList(nominee, food_list) #deletes nominee from nominee_list
+        if not test then res.send "this doesnt work well."
+        robot.brain.data.food_list = food_list.places #save updated lunch list to brain
         res.send "**"+name+"** has been added to the lunch list."
       else
-        res.send "OK. **"+name+"**, id "+id+", has "+nominee_list.getUsers(id).length+" vote(s)."
-      robot.brain.data.nominee_list = nominee_list.places
+        res.send "OK. **"+nominee.name+"**,
+                  id "+nominee.id+", 
+                  has "+nominee.users.length+" vote(s)."
+      robot.brain.data.nominee_list = nominee_list.places #save updated nominee list to brain
     
   robot.respond /(?:unnom|unnominate) (.*)/i, (res) ->
     #get all relevant variables
     nominee_list = new PlaceList(robot.brain.data.nominee_list)
-    nominee = res.match[1].toLowerCase().trim()
+    nom = res.match[1].toLowerCase().trim()
     user = res.message.user.name
-    id = nominee_list.getId(nominee)
+    id = nominee_list.find(nom)
     #check if nominee exists
-    if !id or (nominee_list.getUsers(id).length == 0)
-      res.send "**"+nominee+"** hasn't been nominated for the lunch list by anyone. To remove an entry, use 'rm lunch <place>'"
+    if !id or (nominee_list.get(id).users.length == 0)
+      res.send "**"+nom+"** hasn't been nominated for the lunch list by anyone.
+               To remove an entry, use 'rm lunch <place>'"
     else
+      nominee = nominee_list.get(id)
+      name = nominee.name
       #find user's vote, and remove it.
-      name = nominee_list.getName(id)
       if nominee_list.removeUserFromPlace(user, nominee)
-        if nominee_list.getUsers(id).length == 0 
-          nominee_list.removePlace(id)
-          res.send "Your vote has been removed. **"+name+"** has 0 vote(s)."
+        if nominee.users.length == 0
+          nominee_list.remove(nominee)
+          res.send "Your vote has been removed.
+                   **"+name+"** has 0 vote(s)."
         else
-          res.send "Your vote has been removed. **"+name+"**, id "+id+", has "+nominee_list.getUsers(id).length+" vote(s)."
+          res.send "Your vote has been removed. 
+                   **"+name+"**, id "+id+", has "+nominee.users.length+" vote(s)."
         robot.brain.data.nominee_list = nominee_list.places
       else
-        res.send "You have not nominated **"+name+"**. You can only un-nominate your own votes. If you would like to remove an entry, use 'rm lunch <place>'"
+        res.send "You have not nominated **"+name+"**. 
+                  You can only un-nominate your own votes. 
+                  If you would like to remove an entry, use 'rm lunch <place>'"
 
   robot.respond /(?:unlunch|(?:remove|rm) lunch) (.*)/i, (res) ->
     #get all relevant variables
     food_list = new PlaceList(robot.brain.data.food_list)
     denominate_list = new PlaceList(robot.brain.data.denominate_list)
-    nominee = res.match[1].toLowerCase().trim()
+    nom = res.match[1].toLowerCase().trim()
     user = res.message.user.name
     #check if nominee if even in food_list
-    if !food_list.getId(nominee)
-      res.send nominee+" is not on the lunch list"
+    if !food_list.find(nom)
+      res.send nom+" is not on the lunch list"
       return
-    id = denominate_list.getId(nominee)
+    id = denominate_list.find(nom)
     #initialize if not in the denominate_list
     if !id
-      id = denominate_list.addPlace(nominee)
+      id = denominate_list.add(nom)
     #can't vote more than once
-    name = denominate_list.getName(id)
-    if user in denominate_list.getUsers(id)
-      res.send "You've already nominated **"+name+"**, id "+id+", for removal. It has "+denominate_list.getUsers(id).length+" vote(s)."
+    nominee = denominate_list.get(id)
+    name = nominee.name
+    if user in nominee.users
+      res.send "You've already nominated **"+name+"**, id "+id+", for removal.
+                It has "+nominee.users.length+" vote(s)."
     else
-      denominate_list.addUserToPlace(user, id)
-      #more than 5 votes moves the nominee to the lunch list
-      if denominate_list.getUsers(id).length > NUM_VOTES
-        food_list.removePlace(nominee) #need to use actual name rather than ID
-        denominate_list.removePlace(id)
+      nominee.users.push user
+      #more than 5 votes moves the nominee off the lunch list
+      if nominee.users.length > NUM_VOTES
+        food_list.remove(food_list.get(food_list.find(nominee.name)))
+        denominate_list.remove(nominee)
         robot.brain.set 'food_list', food_list
-        res.send nominee+" has been removed the lunch list."
+        res.send name+" has been removed the lunch list."
       else
-        res.send "OK. **"+name+"**, id "+id+", has "+denominate_list.getUsers(id).length+" vote(s) for removal."
+        res.send "OK. **"+name+"**, id "+id+", 
+                  has "+nominee.users.length+" vote(s) for removal."
     robot.brain.data.denominate_list = denominate_list.places
 
   robot.respond /((list|ls) lunch|what('s|s| is) on the( lunch) list).*/i, (res) ->
@@ -186,7 +179,7 @@ module.exports = (robot) ->
     else
       nomineeString = "Nominee list is: \n"
       for k,v of places
-        nom = "**"+v.name+"**: id "+v.id+" : "+v.users.join(', ') 
+        nom = "**"+v.name+"**: id "+v.id+" : "+v.users.join(', ')
         nomineeString += nom+"\n"
       res.send nomineeString
 
@@ -199,41 +192,41 @@ module.exports = (robot) ->
       names = ("**"+lunch.name+"**: "+lunch.users.join(', ') for lunch in places)
       nomineeString = "Entries up for removal: \n"
       for k,v of places
-        nom = "**"+v.name+"**: id "+v.id+" : "+v.users.join(', ') 
+        nom = "**"+v.name+"**: id "+v.id+" : "+v.users.join(', ')
         nomineeString += nom+"\n"
       res.send nomineeString
 
   robot.respond /(what('s|s| is) for lunch.*|(where|what) should .* (eat|lunch).*)/i, (res) ->
-    food_list = new PlaceList(robot.brain.get('food_list'))
+    food_list = new PlaceList(robot.brain.data.food_list)
     day = new Date
     today = day.getDay()
-    todayDate = day.getDate()
+    today_date = day.getDate()
     #compare stored day with today's date
-    storedDay = robot.brain.get('foodDay')
-    storedFood = robot.brain.get('foodRec')
+    stored_day = robot.brain.get('food_day')
+    stored_food = robot.brain.get('food_rec')
     if today == 1
       res.send "HEP Lunch"
-    else if storedDay == todayDate
-      res.send "I've already said "+storedFood
+    else if stored_day == today_date
+      res.send "I've already said "+stored_food
     else
-      todayFoodRec = res.random food_list.places
-      res.send todayFoodRec.name
-      robot.brain.set 'foodDay', todayDate
-      robot.brain.set 'foodRec', todayFoodRec
+      today_food_rec = res.random food_list.list()
+      res.send today_food_rec
+      robot.brain.set 'food_day', today_date
+      robot.brain.set 'food_rec', today_food_rec
 
   robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
     food_list = new PlaceList(robot.brain.get('food_list'))
     day = new Date
     today = day.getDay()
-    todayDate = day.getDate()
+    today_date = day.getDate()
     #compare stored day with today's date
-    storedDay = robot.brain.get('food2Day') 
-    storedFood = robot.brain.get('food2Rec') 
-    if storedDay == todayDate
-      res.send "I've already said "+storedFood
+    stored_day = robot.brain.get('food_day2')
+    stored_food = robot.brain.get('food_rec2')
+    if stored_day == today_date
+      res.send "I've already said "+stored_food
     else
-      todayFoodRec = res.random food_list.places
-      res.send todayFoodRec.name
-      robot.brain.set 'food2Day', todayDate
-      robot.brain.set 'food2Rec', todayFoodRec
+      today_food_rec = res.random food_list.list()
+      res.send today_food_rec
+      robot.brain.set 'food_day2', today_date
+      robot.brain.set 'food_rec2', today_food_rec
 
