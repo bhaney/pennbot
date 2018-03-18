@@ -67,8 +67,8 @@ module.exports = (robot) ->
   robot.brain.data.food_list ?= {}
   robot.brain.data.food_rec ?= 'mexicali'
   robot.brain.data.food_day ?=  -1
-  robot.brain.data.food_rec2 ?= 'mexicali'
-  robot.brain.data.food_day2 ?=  -1
+  robot.brain.data.food_rec_2 ?= 'mexicali'
+  robot.brain.data.food_day_2 ?=  -1
 
   robot.respond /(?:nom|nominate) (.*)/i, (res) ->
     #get all relevant variables
@@ -215,18 +215,18 @@ module.exports = (robot) ->
       robot.brain.set 'food_rec', today_food_rec
 
   robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
-    food_list = new PlaceList(robot.brain.get('food_list'))
+    food_list = new PlaceList(robot.brain.data.food_list)
     day = new Date
     today = day.getDay()
     today_date = day.getDate()
     #compare stored day with today's date
-    stored_day = robot.brain.get('food_day2')
-    stored_food = robot.brain.get('food_rec2')
+    stored_day = robot.brain.get('food_day_2')
+    stored_food = robot.brain.get('food_rec_2')
     if stored_day == today_date
       res.send "I've already said "+stored_food
     else
       today_food_rec = res.random food_list.list()
       res.send today_food_rec
-      robot.brain.set 'food_day2', today_date
-      robot.brain.set 'food_rec2', today_food_rec
+      robot.brain.set 'food_day_2', today_date
+      robot.brain.set 'food_rec_2', today_food_rec
 
