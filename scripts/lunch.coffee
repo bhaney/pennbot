@@ -135,8 +135,8 @@ module.exports = (robot) ->
     nom = res.match[1].toLowerCase().trim()
     user = res.message.user.name
     #check if nominee if even in food_list
-    if !food_list.find(nom)
-      res.send nom+" is not on the lunch list"
+    if !food_list.find(nom) and !denominate_list.find(nom)
+      res.send "**"+nom+"** is not on the lunch list"
       return
     id = denominate_list.find(nom)
     #initialize if not in the denominate_list
