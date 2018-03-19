@@ -49,19 +49,20 @@ module.exports = (robot) ->
     showMenu robot, res, restaurant, day
     return
 
-  robot.respond /(r1|r2|r3)( menu)?/i, (res) ->
+  robot.respond /(r1|r2|r3) menu\s?(today|tomorrow|tuesday|wednesday|thursday|friday|saturday|sunday)?$/i, (res) ->
     restaurant = res.match[1]
-    day = 'today'
+    day = res.match[2] or 'today'
+    day = day.toLowerCase()
     showMenu robot, res, restaurant, day
     return
 
-  robot.respond /(r1|r2|r3) (menu1|menu2|veg|vegetarian|grill|pasta|pizza|speciality|special)/i, (res) ->
+  robot.respond /(r1|r2|r3) (menu1|menu2|veg|vegetarian|grill|pasta|pizza|speciality|special)\s?(today|tomorrow|tuesday|wednesday|thursday|friday|saturday|sunday)?$/i, (res) ->
     restaurant = res.match[1]
     type = res.match[2] || 'error'
     if type == 'veg'
       type = 'vegetarian'
     if type == 'special'
       type = 'speciality'
-    day = 'today'
+    day = res.match[3].toLowerCase() or 'today'
     showSingleMenu robot, res, restaurant, day, type
     return
