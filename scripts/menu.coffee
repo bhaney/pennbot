@@ -1,8 +1,7 @@
 #
 #Commands:
-#   hubot r1 menu - Gives the R1 lunch menu for today
-#   hubot r2menu  - Gives the R2 lunch menu for today
-#
+#   hubot (r1/r2/r3) menu - Gives the R1/R2/R3 lunch menu for today
+#   hubot (r1/r2/r3) (menu1, menu2,pizza, etc) - Gives the R1/R2/R3 menu for a specific dish.
 
 showMenu = (robot, res, restaurant, day) ->
   restaurant = restaurant.toLowerCase()
@@ -50,23 +49,19 @@ module.exports = (robot) ->
     showMenu robot, res, restaurant, day
     return
 
-  robot.respond /(r1|r2) menu?/i, (res) ->
-    restaurant = 'r1'
-    if res.match[1] == 'r2'
-      restaurant = 'r2'
+  robot.respond /(r1|r2|r3)( menu)?/i, (res) ->
+    restaurant = res.match[1]
     day = 'today'
     showMenu robot, res, restaurant, day
     return
 
-  robot.respond /(r1|r2) (menu1|menu2|veg|vegetarian|grill|pasta|pizza|speciality|special)/i, (res) ->
+  robot.respond /(r1|r2|r3) (menu1|menu2|veg|vegetarian|grill|pasta|pizza|speciality|special)/i, (res) ->
+    restaurant = res.match[1]
     type = res.match[2] || 'error'
     if type == 'veg'
       type = 'vegetarian'
     if type == 'special'
       type = 'speciality'
-    restaurant = 'r1'
-    if res.match[1] == 'r2'
-      restaurant = 'r2'
     day = 'today'
     showSingleMenu robot, res, restaurant, day, type
     return
