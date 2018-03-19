@@ -65,7 +65,7 @@ module.exports = (robot) ->
     if type == 'special'
       type = 'speciality'
     restaurant = 'r1'
-    if res.match[1]
+    if res.match[1] == 'r2'
       restaurant = 'r2'
     day = 'today'
     showSingleMenu robot, res, restaurant, day, type
