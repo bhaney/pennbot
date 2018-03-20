@@ -70,7 +70,7 @@ module.exports = (robot) ->
   robot.brain.data.food_rec_2 ?= 'mexicali'
   robot.brain.data.food_day_2 ?=  -1
 
-  robot.respond /(?:nom|nominate) (.*)/i, (res) ->
+  robot.respond /(?:nom|nominate) (.*)\s?(?:for lunch)?$/i, (res) ->
     #get all relevant variables
     food_list = new PlaceList(robot.brain.data.food_list)
     nominee_list = new PlaceList(robot.brain.data.nominee_list)
@@ -100,7 +100,7 @@ module.exports = (robot) ->
                   has "+nominee.users.length+" vote(s)."
       robot.brain.data.nominee_list = nominee_list.places #save updated nominee list to brain
     
-  robot.respond /(?:unnom|unnominate) (.*)/i, (res) ->
+  robot.respond /(?:unnom|unnominate) (.*)\s?(?:for lunch)?$/i, (res) ->
     #get all relevant variables
     nominee_list = new PlaceList(robot.brain.data.nominee_list)
     nom = res.match[1].toLowerCase().trim()
@@ -128,7 +128,7 @@ module.exports = (robot) ->
                   You can only un-nominate your own votes. 
                   If you would like to remove an entry, use 'rm lunch <place>'"
 
-  robot.respond /(?:unlunch|(?:remove|rm) lunch) (.*)/i, (res) ->
+  robot.respond /(?:unlunch|(?:remove|rm) lunch) (.*)$/i, (res) ->
     #get all relevant variables
     food_list = new PlaceList(robot.brain.data.food_list)
     denominate_list = new PlaceList(robot.brain.data.denominate_list)
