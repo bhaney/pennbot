@@ -12,8 +12,8 @@ printMenuInEnglish = (menu, menu_str, i, res) ->
     name = dish["name"]
     price = dish["price"]
     translate(name, {from: 'fr', to: 'en'}).then (data) ->
-      name = data.text
-      menu_str += "*"+type+"*: **"+name+"** (*CHF "+price+"*)\n"
+      en_name = data.text
+      menu_str += "*"+type+"*: **"+name+" / "+en_name+"** (*CHF "+price+"*)\n"
       printMenuInEnglish(menu, menu_str, i+1, res)
     .catch (err) ->
       menu_str = 'Google Translate API error.'
