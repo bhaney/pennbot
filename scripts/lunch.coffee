@@ -108,8 +108,8 @@ module.exports = (robot) ->
     id = nominee_list.find(nom)
     #check if nominee exists
     if !id or (nominee_list.get(id).users.length == 0)
-      res.send "**"+nom+"** hasn't been nominated for the lunch list by anyone.
-               To remove an entry, use 'rm lunch <place>'"
+      res.send "No one has nominated **"+nom+"** for lunch.
+               To remove an entry, use 'pennbot rm lunch <place>'"
     else
       nominee = nominee_list.get(id)
       name = nominee.name
