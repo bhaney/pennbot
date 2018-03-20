@@ -7,6 +7,8 @@
   "dependencies": {
     "chrono-node": "^0.1.10",
     "coffee-script": "^1.12.6",
+    "cowsay": "^1.2.1",
+    "cron": ">= 1.0.1",
     "google-translate-api": "^2.3.0",
     "hubot": "^2.19.0",
     "hubot-conversation": "^1.1.1",
@@ -18,11 +20,11 @@
     "hubot-redis-brain": "0.0.4",
     "hubot-rules": "^0.1.2",
     "hubot-scripts": "^2.17.2",
-    "cron": ">= 1.0.1",
     "lodash": "^2.4.1",
     "moment": "^2.8.1",
-    "time": "*",
-    "redis": "^2.8"
+    "parrotsay-api": "^0.1.1",
+    "redis": "^2.8",
+    "time": "*"
   },
   "engines": {
     "node": "0.10.x"
