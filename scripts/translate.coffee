@@ -4,6 +4,9 @@
 # Commands:
 #   hubot translate <phrase> - Searches for a translation for the <phrase> and then prints that bad boy out.
 #   hubot translate from <source> to <target> <phrase> - Translates <phrase> from <source> into <target>. Both <source> and <target> are optional
+#
+#author:
+#   https://github.com/hubot-scripts/hubot-google-translate
 
 translate = require('google-translate-api')
 languages =

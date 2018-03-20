@@ -3,6 +3,5 @@
   "hubot-help",
   "hubot-pugme",
   "hubot-redis-brain",
-  "hubot-rules",
-  "hubot-cron"
+  "hubot-rules"
 ]
