@@ -2,7 +2,7 @@
 #   Make animals say things
 #
 # Commands:
-#   hubot cowsay <phrase> - Make the cowsay say <phrase>
+#   hubot cowsay <phrase> - Make the cow say <phrase>
 #   hubot <animal>say <phrase> - Make the animal say <phrase>
 #   hubot randsay <phrase> - Makes a random animal say <phrase>
 #   hubot list animals - See which animals can say things
@@ -12,7 +12,7 @@ cow = require('cowsay')
 cows = ['cheese','bunny','dragon','elephant',
         'flaming-sheep','goat','ghostbusters','hedgehog',
         'kiss', 'kitty', 'mech-and-cow','moose',
-        'sheep','small','squirrel','stegosaurus','milk',
+        'sheep','small','squirrel','stegosaurus',
         'turtle','whale']
 
 module.exports = (robot) ->
