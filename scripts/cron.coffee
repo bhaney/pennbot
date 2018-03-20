@@ -18,7 +18,7 @@ JOBS = {}
 
 createNewJob = (robot, pattern, user, message) ->
   id = Math.floor(Math.random() * 1000000) while !id? || JOBS[id]
-  job = registerNewJob robot, id, pattern, user, message
+  job = registerNewJob robot, id, pattern, user, message, "America/New_York"
   robot.brain.data.cronjob[id] = job.serialize()
   id
 
@@ -96,7 +96,7 @@ module.exports = (robot) ->
     for id, job of JOBS
       room = job.user.reply_to || job.user.room
       if room == msg.message.user.reply_to or room == msg.message.user.room
-        text += "#{id}: `#{job.pattern}` @#{room} \"#{job.message}\"\n"
+        text += "#{id}: `#{job.pattern} tz:#{job.timezone}` \"#{job.message}\"\n"
     text = robot.adapter.removeFormatting text if robot.adapterName == 'slack'
     msg.send text if text.length > 0
 
@@ -117,7 +117,7 @@ module.exports = (robot) ->
     if (id = msg.match[1]) and (timezone = msg.match[2]) and updateJobTimezone(robot, id, timezone)
       msg.send "Job #{id} updated to use #{timezone}"
     else
-      msg.send "Job #{id} does not exist"
+      msg.send "Job #{id} does not exist, or timezone not specified"
 
 class Job
   constructor: (id, pattern, user, message, timezone) ->
