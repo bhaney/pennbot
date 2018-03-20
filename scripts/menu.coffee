@@ -16,9 +16,8 @@ printMenuInEnglish = (menu, menu_str, i, res) ->
       menu_str += "*"+type+"*: **"+name+" / "+en_name+"** (*CHF "+price+"*)\n"
       printMenuInEnglish(menu, menu_str, i+1, res)
     .catch (err) ->
-      menu_str = 'Google Translate API error.'
       robot.emit 'error', err
-      return menu_str
+      res.send 'Google Translate API error.'
   else
     res.send menu_str
 
