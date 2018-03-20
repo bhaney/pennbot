@@ -92,7 +92,8 @@ module.exports = (robot) ->
     target = if msg.match[2] isnt undefined then getCode(msg.match[2], languages) else 'en'
 
     translate(term, {from: origin, to: target}).then (data) ->
-      msg.send "from #{languages[data.from.language.iso]} to #{languages[target]}: "+data.text
+      ori = if  origin is 'auto' then data.from.language.iso else origin
+      msg.send "from #{languages[ori]} to #{languages[target]}: "+data.text
     .catch (err) ->
       msg.send "Failed to parse Google translate response"
       robot.emit 'error', err
