@@ -20,7 +20,7 @@ createNewJob = (robot, pattern, user, message) ->
   id = Math.floor(Math.random() * 1000000) while !id? || JOBS[id]
   job = registerNewJob robot, id, pattern, user, message, "America/New_York"
   robot.brain.data.cronjob[id] = job.serialize()
-  id
+  return id
 
 registerNewJobFromBrain = (robot, id, pattern, user, message, timezone) ->
   # for jobs saved in v0.2.0..v0.2.2
@@ -35,8 +35,15 @@ storeJobToBrain = (robot, id, job) ->
 
 registerNewJob = (robot, id, pattern, user, message, timezone) ->
   job = new Job(id, pattern, user, message, timezone)
-  job.start(robot)
+  try
+    job.start(robot)
+  catch err
+    if err.message.includes('timezone')
+      job = new Job(id, pattern, user, message, "America/New_York")
+      robot.brain.data.cronjob[id] = job.serialize()
+      job.start(robot)
   JOBS[id] = job
+  return job
 
 unregisterJob = (robot, id)->
   if JOBS[id]
@@ -56,6 +63,7 @@ handleNewJob = (robot, msg, pattern, message) ->
 updateJobTimezone = (robot, id, timezone) ->
   if JOBS[id]
     JOBS[id].stop()
+    old_timezone = JOBS[id].timezone
     JOBS[id].timezone = timezone
     robot.brain.data.cronjob[id] = JOBS[id].serialize()
     JOBS[id].start(robot)
@@ -95,8 +103,8 @@ module.exports = (robot) ->
     text = ''
     for id, job of JOBS
       room = job.user.reply_to || job.user.room
-      if room == msg.message.user.reply_to or room == msg.message.user.room
-        text += "#{id}: `#{job.pattern} tz:#{job.timezone}` \"#{job.message}\"\n"
+      #if room == msg.message.user.reply_to or room == msg.message.user.room
+      text += "#{id}: `#{job.pattern} tz:#{job.timezone}` \"#{job.message}\"\n"
     text = robot.adapter.removeFormatting text if robot.adapterName == 'slack'
     if text.length > 0
       msg.send text
@@ -117,10 +125,16 @@ module.exports = (robot) ->
         msg.send "Job #{id} deleted"
 
   robot.respond /(?:tz|timezone) job (\d+) (.*)/i, (msg) ->
-    if (id = msg.match[1]) and (timezone = msg.match[2]) and updateJobTimezone(robot, id, timezone)
-      msg.send "Job #{id} updated to use #{timezone}"
+    if (id = msg.match[1]) and (timezone = msg.match[2]) and (job = JOBS[id])
+      old_timezone = job.timezone
+      try
+        updateJobTimezone(robot, id, timezone)
+        msg.send "Job #{id} updated to use #{timezone}"
+      catch err
+        msg.send "#{err} Select a location from this list https://timezonedb.com/time-zones"
+        updateJobTimezone(robot, id, old_timezone)
     else
-      msg.send "Job #{id} does not exist, or timezone not specified"
+      msg.send "Job #{id} does not exist or timezone not specified"
 
 class Job
   constructor: (id, pattern, user, message, timezone) ->
