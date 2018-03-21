@@ -13,7 +13,6 @@
 #   miyagawa (https://github.com/miyagawa/hubot-cron)
 
 cronJob = require('cron').CronJob
-Qs = require 'qs'
 try
   {Robot,Adapter,TextMessage,User} = require 'hubot'
 catch
