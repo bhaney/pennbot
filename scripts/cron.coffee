@@ -13,19 +13,20 @@
 #   miyagawa (https://github.com/miyagawa/hubot-cron)
 
 cronJob = require('cron').CronJob
+Qs = require 'qs'
 
 JOBS = {}
 
-createNewJob = (robot, pattern, user, message) ->
+createNewJob = (robot, pattern, user, message, do_action) ->
   id = Math.floor(Math.random() * 1000000) while !id? || JOBS[id]
-  job = registerNewJob robot, id, pattern, user, message, "America/New_York"
+  job = registerNewJob robot, id, pattern, user, message, "America/New_York", do_action
   robot.brain.data.cronjob[id] = job.serialize()
   return id
 
-registerNewJobFromBrain = (robot, id, pattern, user, message, timezone) ->
+registerNewJobFromBrain = (robot, id, pattern, user, message, timezone, do_action) ->
   # for jobs saved in v0.2.0..v0.2.2
   user = user.user if "user" of user
-  registerNewJob(robot, id, pattern, user, message, timezone)
+  registerNewJob(robot, id, pattern, user, message, timezone, do_action)
 
 storeJobToBrain = (robot, id, job) ->
   robot.brain.data.cronjob[id] = job.serialize()
@@ -33,15 +34,17 @@ storeJobToBrain = (robot, id, job) ->
   envelope = user: job.user, room: job.user.room
   robot.send envelope, "Job #{id} stored in brain asynchronously"
 
-registerNewJob = (robot, id, pattern, user, message, timezone) ->
-  job = new Job(id, pattern, user, message, timezone)
+registerNewJob = (robot, id, pattern, user, message, timezone, do_action) ->
+  job = new Job(id, pattern, user, message, timezone, do_action)
+  cmd = new Command(robot, user)
+  webhook = new Webhook()
   try
-    job.start(robot)
+    job.start(robot, cmd, webhook)
   catch err
     if err.message.includes('timezone')
       job = new Job(id, pattern, user, message, "America/New_York")
       robot.brain.data.cronjob[id] = job.serialize()
-      job.start(robot)
+      job.start(robot, cmd, webhook)
   JOBS[id] = job
   return job
 
@@ -53,9 +56,10 @@ unregisterJob = (robot, id)->
     return yes
   no
 
-handleNewJob = (robot, msg, pattern, message) ->
+handleNewJob = (robot, msg, pattern, message, act) ->
+  do_action = if act is "action" then true else false
   try
-    id = createNewJob robot, pattern, msg.message.user, message
+    id = createNewJob robot, pattern, msg.message.user, message, do_action
     msg.send "Job #{id} created"
   catch error
     msg.send "Error caught parsing crontab pattern: #{error}. See http://crontab.org/ for the syntax"
@@ -66,7 +70,7 @@ updateJobTimezone = (robot, id, timezone) ->
     old_timezone = JOBS[id].timezone
     JOBS[id].timezone = timezone
     robot.brain.data.cronjob[id] = JOBS[id].serialize()
-    JOBS[id].start(robot)
+    #JOBS[id].start(robot, cmd, webhook)
     return yes
   no
 
@@ -90,14 +94,14 @@ module.exports = (robot) ->
   robot.brain.on 'loaded', =>
     syncJobs robot
 
-  robot.respond /(?:new|add) job "(.*?)" (.*)$/i, (msg) ->
-    handleNewJob robot, msg, msg.match[1], msg.match[2]
+  robot.respond /(?:new|add) (job|action) "(.*?)" (.*)$/i, (msg) ->
+    handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
-  robot.respond /(?:new|add) job (.*) "(.*?)" *$/i, (msg) ->
-    handleNewJob robot, msg, msg.match[1], msg.match[2]
+  robot.respond /(?:new|add) (job|action) (.*) "(.*?)" *$/i, (msg) ->
+    handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
-  robot.respond /(?:new|add) job (.*?) say (.*?) *$/i, (msg) ->
-    handleNewJob robot, msg, msg.match[1], msg.match[2]
+  robot.respond /(?:new|add) (job|action) (.*?) say (.*?) *$/i, (msg) ->
+    handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
   robot.respond /(?:list|ls) jobs?/i, (msg) ->
     text = ''
@@ -137,7 +141,7 @@ module.exports = (robot) ->
       msg.send "Job #{id} does not exist or timezone not specified"
 
 class Job
-  constructor: (id, pattern, user, message, timezone) ->
+  constructor: (id, pattern, user, message, timezone, do_action) ->
     @id = id
     @pattern = pattern
     # cloning user because adapter may touch it later
@@ -146,19 +150,59 @@ class Job
     @user = clonedUser
     @message = message
     @timezone = timezone
+    @do_action = do_action
 
-  start: (robot) ->
-    @cronjob = new cronJob(@pattern, =>
-      @sendMessage robot
-    , null, false, @timezone)
+  start: (robot, cmd, webhook) ->
+    @cronjob = new cronJob({
+      cronTime: @pattern,
+      onTick: () => @sendMessage(robot, cmd, webhook),
+      start: false,
+      timeZone: @timezone
+    })
     @cronjob.start()
 
   stop: ->
     @cronjob.stop()
 
   serialize: ->
-    [@pattern, @user, @message, @timezone]
+    [@pattern, @user, @message, @timezone, @do_action]
 
-  sendMessage: (robot) ->
+  sendMessage: (robot, cmd, webhook) ->
     envelope = user: @user, room: @user.room
     robot.send envelope, @message
+    if @do_action
+      robot.send envelope, "testing before the reply! user is #{@user.name} and room is #{@user.room}"
+      cmd.reply(webhook, text: @message)
+
+class Webhook
+  constructor: () ->
+    @url = 'https://bots.bijanhaney.com/pennbot'
+    #@params = Qs.parse env.HUBOT_WEBHOOK_PARAMS
+    @params = 'token=9cquzjqrpbdzupr383hsrdrq8r&trigger_word=pennbot'
+    @method = 'POST'
+
+  prepareParams: (user, params) ->
+    params[k] = v for k, v of @params
+    params['user_id'] = user.id
+    params['user_name'] = user.name
+    params['channel_id'] = user.room
+    params['channel_name'] = user.room
+    params['reply_to'] = user.reply_to
+
+  makeHttp: (robot, params) ->
+    http = robot.http(@url)
+    http.post(Qs.stringify params)
+
+class Command
+  constructor: (@robot, @user) ->
+
+  reply: (webhook, params) ->
+    webhook.prepareParams(@user, params)
+    body = webhook.makeHttp(@robot, params) @callback
+
+  callback: (err, _, body) =>
+    envelope = user: @user, room: @user.room
+    if err?
+      @robot.send envelope, err
+    else if body
+      @robot.send envelope, body
