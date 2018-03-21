@@ -113,7 +113,7 @@ module.exports = (robot) ->
     for id, job of JOBS
       room = job.user.reply_to || job.user.room
       if room == msg.message.user.reply_to or room == msg.message.user.room
-        act = if job.do_action then 'ACTION' else ''
+        act = if job.do_action then 'ACTION' else 'SAY'
         text += "#{id}: `#{job.pattern} tz:#{job.timezone} #{act}` \"#{job.message}\"\n"
     text = robot.adapter.removeFormatting text if robot.adapterName == 'slack'
     if text.length > 0
