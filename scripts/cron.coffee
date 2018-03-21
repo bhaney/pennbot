@@ -37,7 +37,7 @@ storeJobToBrain = (robot, id, job) ->
 registerNewJob = (robot, id, pattern, user, message, timezone, do_action) ->
   job = new Job(id, pattern, user, message, timezone, do_action)
   cmd = new Command(robot, user)
-  webhook = new Webhook()
+  webhook = new Webhook(process.env)
   try
     job.start(robot, cmd, webhook)
   catch err
@@ -171,14 +171,13 @@ class Job
     envelope = user: @user, room: @user.room
     robot.send envelope, @message
     if @do_action
-      robot.send envelope, "testing before the reply! user is #{@user.name} and room is #{@user.room}"
-      cmd.reply(webhook, text: @message)
+      cmd.reply(webhook, {text: @message})
 
 class Webhook
-  constructor: () ->
-    @url = 'https://bots.bijanhaney.com/pennbot'
+  constructor: (env) ->
+    @url = 'http://127.0.0.1:8080/pennbot/incoming/'
     #@params = Qs.parse env.HUBOT_WEBHOOK_PARAMS
-    @params = 'token=9cquzjqrpbdzupr383hsrdrq8r&trigger_word=pennbot'
+    @params = {'token':'9cquzjqrpbdzupr383hsrdrq8r'}
     @method = 'POST'
 
   prepareParams: (user, params) ->
@@ -187,22 +186,28 @@ class Webhook
     params['user_name'] = user.name
     params['channel_id'] = user.room
     params['channel_name'] = user.room
-    params['reply_to'] = user.reply_to
+    return params
 
   makeHttp: (robot, params) ->
     http = robot.http(@url)
-    http.post(Qs.stringify params)
+    http.header('Content-Type', 'application/json')
+    http.post(JSON.stringify params)
 
 class Command
   constructor: (@robot, @user) ->
 
   reply: (webhook, params) ->
-    webhook.prepareParams(@user, params)
-    body = webhook.makeHttp(@robot, params) @callback
+    envelope = {user: @user, room: @user.room}
+    params = webhook.prepareParams(@user, params)
+    #@robot.send envelope, "text is #{params.text} and token is #{params.token} and user is #{params.user_name}"
+    webhook.makeHttp(@robot, params) @callback
 
-  callback: (err, _, body) =>
+  callback: (err, res, body) =>
     envelope = user: @user, room: @user.room
     if err?
-      @robot.send envelope, err
+      @robot.send envelope, "there was an error: "+err.message
+      @robot.send envelope, response
     else if body
+      @robot.send envelope, "recieved response, it is #{res.statusCode}: #{res.statusMessage}"
+      @robot.send envelope, "header keys are "+Object.keys(res.headers).join(', ')
       @robot.send envelope, body
