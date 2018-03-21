@@ -14,6 +14,11 @@
 
 cronJob = require('cron').CronJob
 Qs = require 'qs'
+try
+  {Robot,Adapter,TextMessage,User} = require 'hubot'
+catch
+  prequire = require('parent-require')
+  {Robot,Adapter,TextMessage,User} = prequire 'hubot'
 
 JOBS = {}
 
@@ -36,15 +41,13 @@ storeJobToBrain = (robot, id, job) ->
 
 registerNewJob = (robot, id, pattern, user, message, timezone, do_action) ->
   job = new Job(id, pattern, user, message, timezone, do_action)
-  cmd = new Command(robot, user)
-  webhook = new Webhook(process.env)
   try
-    job.start(robot, cmd, webhook)
+    job.start(robot)
   catch err
     if err.message.includes('timezone')
       job = new Job(id, pattern, user, message, "America/New_York")
       robot.brain.data.cronjob[id] = job.serialize()
-      job.start(robot, cmd, webhook)
+      job.start(robot)
   JOBS[id] = job
   return job
 
@@ -70,7 +73,7 @@ updateJobTimezone = (robot, id, timezone) ->
     old_timezone = JOBS[id].timezone
     JOBS[id].timezone = timezone
     robot.brain.data.cronjob[id] = JOBS[id].serialize()
-    #JOBS[id].start(robot, cmd, webhook)
+    JOBS[id].start(robot)
     return yes
   no
 
@@ -152,10 +155,10 @@ class Job
     @timezone = timezone
     @do_action = do_action
 
-  start: (robot, cmd, webhook) ->
+  start: (robot) ->
     @cronjob = new cronJob({
       cronTime: @pattern,
-      onTick: () => @sendMessage(robot, cmd, webhook),
+      onTick: () => @sendMessage(robot),
       start: false,
       timeZone: @timezone
     })
@@ -167,47 +170,10 @@ class Job
   serialize: ->
     [@pattern, @user, @message, @timezone, @do_action]
 
-  sendMessage: (robot, cmd, webhook) ->
+  sendMessage: (robot) ->
     envelope = user: @user, room: @user.room
     robot.send envelope, @message
     if @do_action
-      cmd.reply(webhook, {text: @message})
-
-class Webhook
-  constructor: (env) ->
-    @url = 'http://127.0.0.1:8080/pennbot/incoming/'
-    #@params = Qs.parse env.HUBOT_WEBHOOK_PARAMS
-    @params = {'token':'9cquzjqrpbdzupr383hsrdrq8r'}
-    @method = 'POST'
-
-  prepareParams: (user, params) ->
-    params[k] = v for k, v of @params
-    params['user_id'] = user.id
-    params['user_name'] = user.name
-    params['channel_id'] = user.room
-    params['channel_name'] = user.room
-    return params
-
-  makeHttp: (robot, params) ->
-    http = robot.http(@url)
-    http.header('Content-Type', 'application/json')
-    http.post(JSON.stringify params)
-
-class Command
-  constructor: (@robot, @user) ->
-
-  reply: (webhook, params) ->
-    envelope = {user: @user, room: @user.room}
-    params = webhook.prepareParams(@user, params)
-    #@robot.send envelope, "text is #{params.text} and token is #{params.token} and user is #{params.user_name}"
-    webhook.makeHttp(@robot, params) @callback
-
-  callback: (err, res, body) =>
-    envelope = user: @user, room: @user.room
-    if err?
-      @robot.send envelope, "there was an error: "+err.message
-      @robot.send envelope, response
-    else if body
-      @robot.send envelope, "recieved response, it is #{res.statusCode}: #{res.statusMessage}"
-      @robot.send envelope, "header keys are "+Object.keys(res.headers).join(', ')
-      @robot.send envelope, body
+      msg = @message
+      user = @user
+      robot.receive new TextMessage(user, msg)
