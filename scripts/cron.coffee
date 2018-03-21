@@ -2,11 +2,11 @@
 #   register cron jobs to schedule messages on the current channel
 #
 # Commands:
-#   hubot new job "<crontab format>" <message> - Schedule a cron job to say something
-#   hubot new job <crontab format> "<message>" - Ditto
-#   hubot new job <crontab format> say <message> - Ditto
-#   hubot list jobs - List current cron jobs
-#   hubot remove job <id> - remove job
+#   hubot new (job/action) "<crontab format>" <message> - Schedule a cron job to say something (job) or do something (action)
+#   hubot new (job/action) <crontab format> "<message>" - Ditto
+#   hubot new (job/action) <crontab format> say <message> - Ditto
+#   hubot list jobs - List current cron jobs and actions
+#   hubot remove job <id> - remove job or action
 #   hubot remove job with message <message> - remove with message
 #
 # Author:
@@ -62,7 +62,10 @@ handleNewJob = (robot, msg, pattern, message, act) ->
   do_action = if act is "action" then true else false
   try
     id = createNewJob robot, pattern, msg.message.user, message, do_action
-    msg.send "Job #{id} created"
+    if do_action
+      msg.send "Action #{id} created."
+    else
+      msg.send "Job #{id} created"
   catch error
     msg.send "Error caught parsing crontab pattern: #{error}. See http://crontab.org/ for the syntax"
 
@@ -110,27 +113,28 @@ module.exports = (robot) ->
     for id, job of JOBS
       room = job.user.reply_to || job.user.room
       if room == msg.message.user.reply_to or room == msg.message.user.room
-        text += "#{id}: `#{job.pattern} tz:#{job.timezone}` \"#{job.message}\"\n"
+        act = if job.do_action then 'ACTION' else ''
+        text += "#{id}: `#{job.pattern} tz:#{job.timezone} #{act}` \"#{job.message}\"\n"
     text = robot.adapter.removeFormatting text if robot.adapterName == 'slack'
     if text.length > 0
       msg.send text
     else
       msg.send 'There are no jobs saved in this channel.'
 
-  robot.respond /(?:rm|remove|del|delete) job (\d+)/i, (msg) ->
+  robot.respond /(?:rm|remove|del|delete) (?:job|action) (\d+)/i, (msg) ->
     if (id = msg.match[1]) and unregisterJob(robot, id)
       msg.send "Job #{id} deleted"
     else
       msg.send "Job #{id} does not exist"
 
-  robot.respond /(?:rm|remove|del|delete) job with message (.+)/i, (msg) ->
+  robot.respond /(?:rm|remove|del|delete) (?:job|action) with message (.+)/i, (msg) ->
     message = msg.match[1]
     for id, job of JOBS
       room = job.user.reply_to || job.user.room
       if (room == msg.message.user.reply_to or room == msg.message.user.room) and job.message == message and unregisterJob(robot, id)
         msg.send "Job #{id} deleted"
 
-  robot.respond /(?:tz|timezone) job (\d+) (.*)/i, (msg) ->
+  robot.respond /(?:tz|timezone) (?:job|action) (\d+) (.*)/i, (msg) ->
     if (id = msg.match[1]) and (timezone = msg.match[2]) and (job = JOBS[id])
       old_timezone = job.timezone
       try
@@ -170,9 +174,10 @@ class Job
     [@pattern, @user, @message, @timezone, @do_action]
 
   sendMessage: (robot) ->
-    envelope = user: @user, room: @user.room
-    robot.send envelope, @message
     if @do_action
       msg = @message
       user = @user
       robot.receive new TextMessage(user, msg)
+    else
+      envelope = user: @user, room: @user.room
+      robot.send envelope, @message
