@@ -2,11 +2,11 @@
 #   register cron jobs to schedule messages on the current channel
 #
 # Commands:
-#   hubot new (job/action) "<crontab format>" <message> - Schedule a cron job to say something (job) or do something (action)
-#   hubot new (job/action) <crontab format> "<message>" - Ditto
-#   hubot new (job/action) <crontab format> say <message> - Ditto
-#   hubot list jobs - List current cron jobs and actions
-#   hubot remove job <id> - remove job or action
+#   hubot new job (action) "<crontab format>" <message> - Schedule a cron job to say something. To make the bot do something, put action after job.
+#   hubot new job (action) <crontab format> "<message>" - Ditto
+#   hubot new job (action) <crontab format> say <message> - Ditto
+#   hubot list jobs - List current cron jobs 
+#   hubot remove job <id> - remove job 
 #   hubot remove job with message <message> - remove with message
 #
 # Author:
@@ -59,7 +59,7 @@ unregisterJob = (robot, id)->
   no
 
 handleNewJob = (robot, msg, pattern, message, act) ->
-  do_action = if act is "action" then true else false
+  do_action = if act is "action" or act is "act" then true else false
   try
     id = createNewJob robot, pattern, msg.message.user, message, do_action
     if do_action
@@ -99,13 +99,13 @@ module.exports = (robot) ->
   robot.brain.on 'loaded', =>
     syncJobs robot
 
-  robot.respond /(?:new|add) (job|action) "(.*?)" (.*)$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(\w*)? "(.*?)" (.*)$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
-  robot.respond /(?:new|add) (job|action) (.*) "(.*?)" *$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(\w*)? (.*) "(.*?)" *$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
-  robot.respond /(?:new|add) (job|action) (.*?) say (.*?) *$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(\w*)? (.*?) say (.*?) *$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
   robot.respond /(?:list|ls) jobs?/i, (msg) ->
@@ -121,20 +121,20 @@ module.exports = (robot) ->
     else
       msg.send 'There are no jobs saved in this channel.'
 
-  robot.respond /(?:rm|remove|del|delete) (?:job|action) (\d+)/i, (msg) ->
+  robot.respond /(?:rm|remove|del|delete) job (\d+)/i, (msg) ->
     if (id = msg.match[1]) and unregisterJob(robot, id)
       msg.send "Job #{id} deleted"
     else
       msg.send "Job #{id} does not exist"
 
-  robot.respond /(?:rm|remove|del|delete) (?:job|action) with message (.+)/i, (msg) ->
+  robot.respond /(?:rm|remove|del|delete) job with message (.+)/i, (msg) ->
     message = msg.match[1]
     for id, job of JOBS
       room = job.user.reply_to || job.user.room
       if (room == msg.message.user.reply_to or room == msg.message.user.room) and job.message == message and unregisterJob(robot, id)
         msg.send "Job #{id} deleted"
 
-  robot.respond /(?:tz|timezone) (?:job|action) (\d+) (.*)/i, (msg) ->
+  robot.respond /(?:tz|timezone) job (\d+) (.*)/i, (msg) ->
     if (id = msg.match[1]) and (timezone = msg.match[2]) and (job = JOBS[id])
       old_timezone = job.timezone
       try
