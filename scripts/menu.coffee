@@ -24,6 +24,8 @@ printMenuInEnglish = (menu, menu_str, i, res) ->
 showMenu = (robot, res, restaurant, day, english) ->
   restaurant = restaurant.toLowerCase()
   day = day.toLowerCase()
+  if english
+    res.send "Wait a minute as I translate the menu with a slow API..."
   robot.http("https://r1d2.herokuapp.com/#{restaurant}/#{day}").get() (err, resp, body) ->
     if err
       res.send "Encountered an error!"
