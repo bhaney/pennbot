@@ -61,7 +61,7 @@ class PlaceList
 
 module.exports = (robot) ->
   NUM_VOTES = 4 #treshold of votes required to change lists
-  #intialize food variables if they doesn't exist
+  #intialize food variables if they don't exist
   robot.brain.data.nominee_list ?= {}
   robot.brain.data.denominate_list ?= {}
   robot.brain.data.food_list ?= {}
@@ -142,9 +142,9 @@ module.exports = (robot) ->
     #initialize if not in the denominate_list
     if !id
       id = denominate_list.add(nom)
-    #can't vote more than once
     nominee = denominate_list.get(id)
     name = nominee.name
+    #can't vote more than once
     if user in nominee.users
       res.send "You've already nominated **"+name+"**, id "+id+", for removal.
                 It has "+nominee.users.length+" vote(s)."
