@@ -24,7 +24,8 @@ printMenuInEnglish = (menu, menu_str, i, res) ->
 showMenu = (robot, res, restaurant, day, english) ->
   restaurant = restaurant.toLowerCase()
   day = day.toLowerCase()
-  robot.http("https://r1d2.herokuapp.com/#{restaurant}/#{day}").get() (err, resp, body) ->
+  robot.http("https://bots.bijanhaney.com/r1d2/#{restaurant}/#{day}").get() (err, resp, body) ->
+  #robot.http("https://r1d2.herokuapp.com/#{restaurant}/#{day}").get() (err, resp, body) ->
     if err
       res.send "Encountered an error!"
       return
@@ -47,7 +48,8 @@ showSingleMenu = (robot, res, restaurant, day, type, english) ->
   restaurant = restaurant.toLowerCase()
   day = day.toLowerCase()
   type = type.toLowerCase()
-  robot.http("https://r1d2.herokuapp.com/#{restaurant}/#{day}/#{type}").get() (err, resp, body) ->
+  robot.http("https://bots.bijanhaney.com/r1d2/#{restaurant}/#{day}/#{type}").get() (err, resp, body) ->
+  #robot.http("https://r1d2.herokuapp.com/#{restaurant}/#{day}").get() (err, resp, body) ->
     if err
       res.send "Encountered an error!"
       return
@@ -81,7 +83,7 @@ module.exports = (robot) ->
     showMenu robot, res, restaurant, day, english
     return
 
-  robot.respond /(r1|r2|r3) menu\s?(today|tomorrow|tuesday|wednesday|thursday|friday|saturday|sunday)?\s?(english)?$/i, (res) ->
+  robot.respond /(r1|r2|r3) menu\s?(today|tomorrow|monday|tuesday|wednesday|thursday|friday)?\s?(english)?$/i, (res) ->
     restaurant = res.match[1]
     day = res.match[2] or 'today'
     day = day.toLowerCase()
@@ -89,7 +91,7 @@ module.exports = (robot) ->
     showMenu robot, res, restaurant, day, english
     return
 
-  robot.respond /(r1|r2|r3) (menu1|menu2|veg|vegetarian|grill|pasta|pizza|speciality|special)\s?(today|tomorrow|tuesday|wednesday|thursday|friday|saturday|sunday)?\s?(english)?$/i, (res) ->
+  robot.respond /(r1|r2|r3) (menu1|menu2|veg|vegetarian|grill|pasta|pizza|speciality|special)\s?(today|tomorrow|monday|tuesday|wednesday|thursday|friday)?\s?(english)?$/i, (res) ->
     restaurant = res.match[1]
     type = res.match[2] || 'error'
     if type == 'veg'

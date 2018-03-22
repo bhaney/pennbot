@@ -99,13 +99,13 @@ module.exports = (robot) ->
   robot.brain.on 'loaded', =>
     syncJobs robot
 
-  robot.respond /(?:new|add) job\s?(\w*)? "([*0-9\s\-]+)" (.*)$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(act\w*)? "([*0-9\s\-]+)" (.*)$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
-  robot.respond /(?:new|add) job\s?(\w*)? ([*0-9\s\-]+) "(.*?)" *$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(act\w*)? ([*0-9\s\-]+) "(.*?)" *$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
-  robot.respond /(?:new|add) job\s?(\w*)? ([*0-9\s\-]+) say (.*?) *$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(act\w*)? ([*0-9\s\-]+) say (.*?) *$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
   robot.respond /(?:list|ls) jobs?/i, (msg) ->
@@ -121,11 +121,21 @@ module.exports = (robot) ->
     else
       msg.send 'There are no jobs saved in this channel.'
 
-  robot.respond /(?:rm|remove|del|delete) job (\d+)/i, (msg) ->
-    if (id = msg.match[1]) and unregisterJob(robot, id)
-      msg.send "Job #{id} deleted"
+  robot.respond /(?:rm|remove|del|delete) (?:job|jobs) ([\s\d]+)/i, (msg) ->
+    in_jobs = msg.match[1] or ""
+    jobs_array = in_jobs.split(" ")
+    jobs_del = []
+    jobs_na = []
+    for id in jobs_array
+      if (id) and unregisterJob(robot, id)
+        jobs_del.push id
+      else
+        jobs_na.push id
+    if jobs_del.length > 0
+      msg.send "Job(s) #{jobs_del.join(', ')} deleted"
     else
-      msg.send "Job #{id} does not exist"
+      msg.send "Job(s) do not exist."
+
 
   robot.respond /(?:rm|remove|del|delete) job with message (.+)/i, (msg) ->
     message = msg.match[1]
