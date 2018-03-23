@@ -122,11 +122,12 @@ module.exports = (robot) ->
         else
           res.send "Your vote has been removed. 
                    **"+name+"**, id "+id+", has "+nominee.users.length+" vote(s)."
+        #either way, save the updated nominee list to robot brain.
         robot.brain.data.nominee_list = nominee_list.places
       else
         res.send "You have not nominated **"+name+"**. 
                   You can only un-nominate your own votes. 
-                  If you would like to remove an entry, use 'rm lunch <place>'"
+                  If you would like to remove an entry, use 'pennbot rm lunch <place>'"
 
   robot.respond /(?:unlunch|(?:remove|rm) lunch) (.*)$/i, (res) ->
     #get all relevant variables
