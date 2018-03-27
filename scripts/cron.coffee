@@ -5,6 +5,7 @@
 #   hubot new job (action) "<crontab format>" <message> - Schedule a cron job to say something. To make the bot do something, put action after job.
 #   hubot new job (action) <crontab format> "<message>" - Ditto
 #   hubot new job (action) <crontab format> say <message> - Ditto
+#   hubot tz <timezone> job <ids> - Change the timezone of the job
 #   hubot list jobs - List current cron jobs 
 #   hubot remove job <id> - remove job 
 #   hubot remove job with message <message> - remove with message
@@ -144,17 +145,23 @@ module.exports = (robot) ->
       if (room == msg.message.user.reply_to or room == msg.message.user.room) and job.message == message and unregisterJob(robot, id)
         msg.send "Job #{id} deleted"
 
-  robot.respond /(?:tz|timezone) job (\d+) (.*)/i, (msg) ->
-    if (id = msg.match[1]) and (timezone = msg.match[2]) and (job = JOBS[id])
-      old_timezone = job.timezone
-      try
-        updateJobTimezone(robot, id, timezone)
-        msg.send "Job #{id} updated to use #{timezone}"
-      catch err
-        msg.send "#{err} Select a location from this list https://timezonedb.com/time-zones"
-        updateJobTimezone(robot, id, old_timezone)
-    else
-      msg.send "Job #{id} does not exist or timezone not specified"
+  robot.respond /(?:tz|timezone) (.*) (?:job|jobs) ([\s\d]+)/i, (msg) ->
+    timezone = msg.match[1]
+    in_jobs = msg.match[2] or ""
+    jobs_changed = []
+    jobs_array = in_jobs.split(" ")
+    for id in jobs_array
+      if (job = JOBS[id])
+        old_timezone = job.timezone
+        try
+          updateJobTimezone(robot, id, timezone)
+          jobs_changed.push id
+        catch err
+          msg.send "#{err} Select a location from this list https://timezonedb.com/time-zones"
+          updateJobTimezone(robot, id, old_timezone)
+      else
+        msg.send "Job #{id} does not exist or timezone not specified"
+    msg.send "Job(s) #{jobs_changed.join(', ')} updated to use #{timezone}"
 
 class Job
   constructor: (id, pattern, user, message, timezone, do_action) ->
