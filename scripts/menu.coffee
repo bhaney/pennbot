@@ -13,7 +13,7 @@ printMenuInEnglish = (menu, menu_str, i, res) ->
     price = dish["price"]
     translate(name, {from: 'fr', to: 'en'}).then (data) ->
       en_name = data.text
-      menu_str += "*"+type+"*: **"+name+" / "+en_name+"** (*CHF "+price+"*)\n"
+      menu_str += "**"+type+"**: "+name+" / "+en_name+" (*CHF "+price+"*)\n"
       printMenuInEnglish(menu, menu_str, i+1, res)
     .catch (err) ->
       robot.emit 'error', err
@@ -64,7 +64,7 @@ showSingleMenu = (robot, res, restaurant, day, type, english) ->
           if english
             translate(name, {from: 'fr', to: 'en'}).then (data) ->
               name = data.text
-              result += "*"+type+"*: **"+name+"** (*CHF "+price+"*)\n"
+              result += "**"+type+"**: "+name+" (*CHF "+price+"*)\n"
               res.send result
             .catch (err) ->
               res.send "Google Translate API error."
