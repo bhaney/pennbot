@@ -4,6 +4,8 @@
 #   hubot (nom)inate <place>  - adds a tally for <place> to be added to the lunch list.
 #   hubot (unnom)inate <place>  - remove your vote for <place> to be added to the lunch list.
 #   hubot remove lunch <place> - adds a tally for <place> to be removed from the lunch list.
+#   hubot review lunch location:"[1]" rating:"[2]" comment"[3]"  - Review the location, give a rating between 1-10, and leave an option comment.
+#   hubot lunch csv - Generates a new CSV of all the lunch reviews.
 #   hubot list lunch - list the lunch options that are saved.
 #   hubot list noms - list the nominees for the lunch list and their votes.
 #   hubot list removals - list the nominees for removal and their votes.
@@ -59,12 +61,57 @@ class PlaceList
     else
       return false
 
+insertReview = (robot, res, username, place, rating, comment) ->
+  #get database token
+  database_token = process.env.HUBOT_LUNCH_TOKEN or null
+  #get weather info
+  api_key = process.env.HUBOT_OWM_APIKEY or null
+  robot.http("http://api.openweathermap.org/data/2.5/weather?q=Philadelphia&units=imperial&APPID=#{api_key}")
+    .header('Accept', 'application/json')
+    .get() (w_err, w_res, w_body) ->
+      if w_err
+        res.send "Encountered an error #{w_err}"
+      else
+        w_data = JSON.parse(w_body)
+        if w_data.message
+          msg.send "#{w_data.message}"
+        data = JSON.stringify({
+          token: database_token,
+          time: Date.now(),
+          suggest: robot.brain.get('food_rec'),
+          weather: w_data.weather[0].main,
+          temp: w_data.main.temp,
+          user: username,
+          actual: place,
+          rating: rating,
+          comment: comment
+        })
+        #now insert the info into the database
+        robot.http("https://bots.bijanhaney.com/lunch/insert")
+          .header('Content-Type', 'application/json')
+          .post(data) (err, response, body) ->
+            if err
+              res.send "Encountered an error #{err}"
+            else
+              result = JSON.parse body
+              if result.success
+                robot.brain.data.user_reviewed_today.push username
+                res.send "Thanks for your feedback! \n
+                          location: #{place} \n 
+                          rating: #{rating} \n
+                          comment: #{comment} \n 
+                          weather: #{w_data.weather[0].main} \n
+                          temperature: #{w_data.main.temp} "
+              else
+                res.send "Was not able to commit review to database: \n #{result.text}"
+
 module.exports = (robot) ->
   NUM_VOTES = 4 #treshold of votes required to change lists
   #intialize food variables if they don't exist
   robot.brain.data.nominee_list ?= {}
   robot.brain.data.denominate_list ?= {}
   robot.brain.data.food_list ?= {}
+  robot.brain.data.user_reviewed_today ?= []
   robot.brain.data.food_rec ?= 'mexicali'
   robot.brain.data.food_day ?=  -1
   robot.brain.data.food_rec_2 ?= 'mexicali'
@@ -214,6 +261,7 @@ module.exports = (robot) ->
       res.send today_food_rec
       robot.brain.set 'food_day', today_date
       robot.brain.set 'food_rec', today_food_rec
+      robot.brain.set 'user_reviewed_today', []
 
   robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
     food_list = new PlaceList(robot.brain.data.food_list)
@@ -231,3 +279,41 @@ module.exports = (robot) ->
       robot.brain.set 'food_day_2', today_date
       robot.brain.set 'food_rec_2', today_food_rec
 
+  robot.respond /review lunch location:\s?"(.*)" rating:\s?"(.*)" comment:\s?"(.*)"$/i, (res) ->
+    #asking for lunch sets the suggested location in the row
+    day = new Date
+    today_date = day.getDate()
+    stored_day = robot.brain.get('food_day')
+    if stored_day != today_date
+      res.send "Before you give a review, you have to ask what's for lunch."
+      return
+    #no one is allowed to vote more than once a day
+    username = res.message.user.name
+    if username in robot.brain.data.user_reviewed_today
+      res.send "You've already given a review for today."
+      return
+    # send the review to the database
+    place = res.match[1] or ''
+    rating = res.match[2] or ''
+    comment = res.match[3] or ' '
+    insertReview(robot, res, username, place, rating, comment)
+
+  robot.respond /lunch csv/i, (res) ->
+      robot.http("https://bots.bijanhaney.com/lunch/getcsv")
+        .get() (err, response, body) ->
+          if err
+            res.send "Encountered an error #{err}"
+          else
+            result = JSON.parse body
+            if result.success
+              res.send "Successfully generated CSV: #{result.text}"
+            else
+              res.send "#{result.text}"
+
+  robot.respond /check lunch review/i, (res) ->
+    #asking for lunch sets the suggested location in the row
+    day = new Date
+    today_date = day.getDate()
+    stored_day = robot.brain.get('food_day')
+    if (stored_day == today_date) and (robot.brain.data.user_reviewed_today.length < 2)
+      res.send "Please consider leaving a review about today's lunch. 'pennbot lunch review location:\"[food]\" rating:\"[1 - 10]\"( comment:\"[optional]\" )' "
