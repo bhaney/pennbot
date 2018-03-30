@@ -50,7 +50,7 @@ quotes = {
                       "It can ruin your life only if it ruins your character. Otherwise it cannot harm you-inside or out.",
                       "Not to live as if you had endless years ahead of you. Death overshadows you. While you're alive and able-be good.",
                       "Constant awareness that everything is born from change. The knowledge that there is nothing nature loves more than to alter what exists and make new things like it. All that exists is the seed of what will emerge from it. You think the only seeds are the ones that make plants or children? Go deeper.",
-                      "Don't be irritated at people's smell or bad breath. What's the point? With that mouth, with those armpits, they’re going to produce that odor. —But they have a brain! Can’t they figure it out? Can’t they recognize the problem? So you have a brain as well. Good for you. Then use your logic to awaken his. Show him. Make him realize it. If he'll listen, then you'll have solved the problem. Without anger."]
+                      "Don't be irritated at people's smell or bad breath. What's the point? With that mouth, with those armpits, they’re going to produce that odor. 'But they have a brain! Can’t they figure it out? Can’t they recognize the problem?' So you have a brain as well. Good for you. Then use your logic to awaken his. Show him. Make him realize it. If he'll listen, then you'll have solved the problem. Without anger."]
 }
 
 module.exports = (robot) ->
