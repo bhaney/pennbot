@@ -9,9 +9,10 @@
 #Commands:
 #   hubot aurelius - Receive wisdom from ancient Rome's preeminent Stoic.
 
-quotes = { "Marcus Aurelius": ["People out for posthumous fame forget that the Generations To Come will be the same annoying people they know now. And just as mortal. What does it matter to you if they say x about you, or think y? Give yourself a gift: the present moment.",
+quotes = {
+  "Marcus Aurelius": ["People out for posthumous fame forget that the Generations To Come will be the same annoying people they know now. And just as mortal. What does it matter to you if they say x about you, or think y? Give yourself a gift: the present moment.",
           "An arrow has one motion and the mind another. Even when pausing, even when weighing conclusions, the mind is moving forward, toward its goal.",
-"Today I escaped from anxiety. Or no, I discarded it, because it was within me, in my own perceptions--not outside.", 
+          "Today I escaped from anxiety. Or no, I discarded it, because it was within me, in my own perceptions--not outside.", 
           "You can discard most of the junk that clutters your mind -things that exist only there-and clear out space for yourself: 1. by comprehending the scale of the world 2. by contemplating infinite time 3. by thinking of the speed with which things change- each part of every thing; the narrow space between our birth and death; the infinite time before; the equally unbounded time that follows.",
           "During my illness, my conversations were not about my physical state; I did not waste my visitors' time with things of that sort, but went on discussing philosophy, and concentrated on one point in particular: how the mind can participate in the sensations of the body and yet maintain its serenity, and focus on its own well-being. Nor did I let my doctors strut about like grandees. I went on living my life the way it should be lived.",
           "If they’ve made a mistake, correct them gently and show them where they went wrong. If you can’t do that, then the blame lies with you. Or no one.",
