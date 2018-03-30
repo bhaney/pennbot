@@ -32,7 +32,7 @@ module.exports = (robot) ->
         else
           msg.send "Forecast for today in #{data.name}, #{data.sys.country}\n
                     Condition: #{data.weather[0].main}, #{data.weather[0].description}\n
-                    Temperature (min / max): #{data.main.temp_min}°#{units[unitsKey]} / #{data.main.temp_max}°#{units[unitsKey]}\n
-                    Humidity: #{data.main.humidity}%\n
-                    Type: #{data.sys.type}\n\n
+                    Temperature: #{data.main.temp}°#{units[unitsKey]}\n
+                    Temperature (low / high): #{data.main.temp_min}°#{units[unitsKey]} / #{data.main.temp_max}°#{units[unitsKey]}\n
+                    Humidity: #{data.main.humidity}%\n\n
                     Last updated: #{new Date(data.dt * 1000)}"

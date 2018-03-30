@@ -62,7 +62,7 @@ module.exports = (robot) ->
       aurelius_quotes = meditations_quotes
     #pick a random quote by marcus aurelius
     picked_quote = res.random aurelius_quotes
-    res.send picked_quote
+    res.send "> #{picked_quote} \n - *Marcus Aurelius*"
     #delete that quote from the list to keep repeats from happening
     i = aurelius_quotes.indexOf(picked_quote)
     if i != -1

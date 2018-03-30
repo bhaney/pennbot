@@ -5,6 +5,7 @@
 #   hubot (unnom)inate <place>  - remove your vote for <place> to be added to the lunch list.
 #   hubot remove lunch <place> - adds a tally for <place> to be removed from the lunch list.
 #   hubot review lunch location:"[1]" rating:"[2]" comment:"[3]"  - Review the location, give a rating between 1-10, and leave an optional comment.
+#   hubot I brought lunch rating:"[1]" comment:"[2]" - Sets your location as brought. 
 #   hubot lunch csv - Generates a new CSV of all the lunch reviews.
 #   hubot list lunch - list the lunch options that are saved.
 #   hubot list noms - list the nominees for the lunch list and their votes.
@@ -70,7 +71,7 @@ insertReview = (robot, res, username, place, rating, comment) ->
     .header('Accept', 'application/json')
     .get() (w_err, w_res, w_body) ->
       if w_err
-        res.send "Encountered an error #{w_err}"
+        res.send "Encountered an error \n `#{w_err}`"
       else
         w_data = JSON.parse(w_body)
         if w_data.message
@@ -92,7 +93,7 @@ insertReview = (robot, res, username, place, rating, comment) ->
           .header('Content-Type', 'application/json')
           .post(data) (err, response, body) ->
             if err
-              res.send "Encountered an error #{err}"
+              res.send "Encountered an error `#{err}`"
             else
               result = JSON.parse body
               if result.success
@@ -100,9 +101,7 @@ insertReview = (robot, res, username, place, rating, comment) ->
                 res.send "Thanks for your feedback! \n
                           location: #{place} \n 
                           rating: #{rating} \n
-                          comment: #{comment} \n 
-                          weather: #{w_data.weather[0].main} \n
-                          temperature: #{w_data.main.temp} F"
+                          comment: #{comment} \n"
               else
                 res.send "Was not able to commit review to database: \n #{result.text}"
 
@@ -232,7 +231,7 @@ module.exports = (robot) ->
         nomineeString += nom+"\n"
       res.send nomineeString
 
-  robot.respond /((list|ls) removals|(what|who)( is| are) up for removal( from the lunch list)?).*/i, (res) ->
+  robot.respond /((list|ls) (removals|unlunch)|(what|who)( is| are) up for removal( from the lunch list)?).*/i, (res) ->
     #get all relevant variables
     places = robot.brain.data.denominate_list
     if !Object.keys(places).length
@@ -258,11 +257,11 @@ module.exports = (robot) ->
     else if stored_day == today_date
       res.send "I've already said "+stored_food
     else
+      robot.brain.data.user_reviewed_today = []
       today_food_rec = res.random food_list.list()
       res.send today_food_rec
       robot.brain.set 'food_day', today_date
       robot.brain.set 'food_rec', today_food_rec
-      robot.brain.set 'user_reviewed_today', []
 
   robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
     food_list = new PlaceList(robot.brain.data.food_list)
@@ -296,7 +295,26 @@ module.exports = (robot) ->
     # send the review to the database
     place = res.match[1] or ''
     rating = res.match[2] or ''
-    comment = res.match[3] or ' '
+    comment = res.match[3] or ''
+    insertReview(robot, res, username, place, rating, comment)
+
+  robot.respond /(?:I )brought lunch rating:\s?"(.*)" comment:\s?"(.*)"$/i, (res) ->
+    ##asking for lunch sets the suggested location in the row
+    day = new Date
+    today_date = day.getDate()
+    stored_day = robot.brain.get('food_day')
+    if stored_day != today_date
+      res.send "Before you give a review, you have to ask what's for lunch."
+      return
+    #no one is allowed to vote more than once a day
+    username = res.message.user.name
+    if username in robot.brain.data.user_reviewed_today
+      res.send "You've already given a review for today."
+      return
+    # send the review to the database
+    place = 'brought'
+    rating = res.match[1] or ''
+    comment = res.match[2] or ''
     insertReview(robot, res, username, place, rating, comment)
 
   robot.respond /lunch csv/i, (res) ->
@@ -316,5 +334,7 @@ module.exports = (robot) ->
     day = new Date
     today_date = day.getDate()
     stored_day = robot.brain.get('food_day')
+    if res.message.user.name == "Shell"
+      res.send robot.brain.data.user_reviewed_today.join(', ')
     if (stored_day == today_date) and (robot.brain.data.user_reviewed_today.length < 2)
       res.send "Please consider leaving a review about today's lunch. 'pennbot review lunch location:\"[food]\" rating:\"[1 - 10]\" comment:\"[optional]\"' "
