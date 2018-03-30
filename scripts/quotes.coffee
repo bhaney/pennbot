@@ -9,7 +9,7 @@
 #Commands:
 #   hubot aurelius - Receive wisdom from ancient Rome's preeminent Stoic.
 
-meditations_quotes = ["People out for posthumous fame forget that the Generations To Come will be the same annoying people they know now. And just as mortal. What does it matter to you if they say x about you, or think y? Give yourself a gift: the present moment.",
+quotes = { "Marcus Aurelius": ["People out for posthumous fame forget that the Generations To Come will be the same annoying people they know now. And just as mortal. What does it matter to you if they say x about you, or think y? Give yourself a gift: the present moment.",
           "An arrow has one motion and the mind another. Even when pausing, even when weighing conclusions, the mind is moving forward, toward its goal.",
 "Today I escaped from anxiety. Or no, I discarded it, because it was within me, in my own perceptions--not outside.", 
           "You can discard most of the junk that clutters your mind -things that exist only there-and clear out space for yourself: 1. by comprehending the scale of the world 2. by contemplating infinite time 3. by thinking of the speed with which things change- each part of every thing; the narrow space between our birth and death; the infinite time before; the equally unbounded time that follows.",
@@ -49,7 +49,7 @@ meditations_quotes = ["People out for posthumous fame forget that the Generation
           "It can ruin your life only if it ruins your character. Otherwise it cannot harm you-inside or out.",
           "Not to live as if you had endless years ahead of you. Death overshadows you. While you're alive and able-be good.",
           "Constant awareness that everything is born from change. The knowledge that there is nothing nature loves more than to alter what exists and make new things like it. All that exists is the seed of what will emerge from it. You think the only seeds are the ones that make plants or children? Go deeper.",
-          "Don't be irritated at people's smell or bad breath. What's the point? With that mouth, with those armpits, they’re going to produce that odor. —But they have a brain! Can’t they figure it out? Can’t they recognize the problem? So you have a brain as well. Good for you. Then use your logic to awaken his. Show him. Make him realize it. If he'll listen, then you'll have solved the problem. Without anger."]
+          "Don't be irritated at people's smell or bad breath. What's the point? With that mouth, with those armpits, they’re going to produce that odor. —But they have a brain! Can’t they figure it out? Can’t they recognize the problem? So you have a brain as well. Good for you. Then use your logic to awaken his. Show him. Make him realize it. If he'll listen, then you'll have solved the problem. Without anger."] }
 
 module.exports = (robot) ->
   #initialize variable in brain if doesn't exist
@@ -57,12 +57,13 @@ module.exports = (robot) ->
 
   robot.respond /aurelius/i, (res) ->
     aurelius_quotes = robot.brain.data.aurelius_quotes
+    author = "Marcus Aurelius"
     #if quotes list is empty, re-fill it
     if aurelius_quotes.length == 0
-      aurelius_quotes = meditations_quotes
+      aurelius_quotes = quotes[author]
     #pick a random quote by marcus aurelius
     picked_quote = res.random aurelius_quotes
-    res.send "> #{picked_quote} \n - *Marcus Aurelius*"
+    res.send "> #{picked_quote} \n - *#{author}*"
     #delete that quote from the list to keep repeats from happening
     i = aurelius_quotes.indexOf(picked_quote)
     if i != -1
