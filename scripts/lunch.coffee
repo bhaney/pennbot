@@ -252,10 +252,14 @@ module.exports = (robot) ->
     #compare stored day with today's date
     stored_day = robot.brain.get('food_day')
     stored_food = robot.brain.get('food_rec')
-    if today == 1
-      res.send "HEP Lunch"
-    else if stored_day == today_date
+    if stored_day == today_date
       res.send "I've already said "+stored_food
+    else if today == 1
+      today_food_rec = "HEP Lunch"
+      res.send today_food_rec
+      robot.brain.data.user_reviewed_today = []
+      robot.brain.set 'food_day', today_date
+      robot.brain.set 'food_rec', today_food_rec
     else
       robot.brain.data.user_reviewed_today = []
       today_food_rec = res.random food_list.list()

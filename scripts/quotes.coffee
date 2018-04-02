@@ -22,7 +22,7 @@ quotes = {
                       "When you wake up, ask yourself: Does it make any difference to you if other people blame you for doing what's right? It makes no difference. ",
                       "Only a short time left. Live as if you were alone-out in the wilderness. No difference between here and there: the city that you live in is the world.",
                       "Stop talking about what the good man is like, and just be one.",
-                      "Stop whatever you’re doing for a moment and ask yourself: Am I afraid of death because I wouldn’t be able to do this anymore?",
+                      "Stop whatever you’re doing for a moment and ask yourself: Am I afraid of death because I wouldn’t be able to do *this* anymore?",
                       "When faced with people's bad behavior, turn around and ask when you have acted like that. When you saw money as a good, or pleasure, or social position. Your anger will subside as soon as you recognize that they acted under compulsion (what else could they do?). Or remove the compulsion, if you can.",
                       "Given the material we're made of, what’s the sanest thing that we can do or say? Whatever it may be, you can do or say it. Don't pretend that anything’s stopping you.",
                       "Learn to ask of all actions, “Why are they doing that?” Starting with your own.",
