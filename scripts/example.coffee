@@ -11,27 +11,31 @@
 #   hubot flip a coin - Flip a coin.
 
 module.exports = (robot) ->
-#  
-   thanks = ["you're welcome!", "😊 ", 'no problem']
-  
-   robot.hear /thanks (pennbot|pb).*/i, (res) ->
-     res.send res.random thanks
+  thanks = ["you're welcome!", "😊 ", 'no problem']
+ 
+  robot.hear /thanks (pennbot|pb).*/i, (res) ->
+    res.send res.random thanks
 
-   robot.respond /thanks.*/i, (res) ->
-     res.send res.random thanks
+  robot.respond /thanks.*/i, (res) ->
+    res.send res.random thanks
 
-   robot.hear /(how do I fix you|where is your source|where do you live).*/i, (res) ->
-     res.send 'https://github.com/bhaney/pennbot'
+  robot.hear /(how do I fix you|where is your source|where do you live).*/i, (res) ->
+    res.send 'https://github.com/bhaney/pennbot'
 
-   coin = ["Heads","Tails"]
-   robot.respond /flip a coin/i, (res) ->
-     res.send res.random coin
+  coin = ["Heads","Tails"]
+  robot.respond /flip a coin/i, (res) ->
+    res.send res.random coin
 
-   dice = ["One","Two","Three","Four","Five","Six"]
-   robot.respond /roll a die/i, (res) ->
-     res.send res.random dice
-   robot.respond /roll .* dice/i, (res) ->
-     res.send res.random dice
+  dice = ["One","Two","Three","Four","Five","Six"]
+  robot.respond /roll a die/i, (res) ->
+    res.send res.random dice
+  robot.respond /roll .* dice/i, (res) ->
+    res.send res.random dice
+
+  robot.respond /test a form/i, (res) ->
+    attachments = [{ fallback: "test", color: "#FF8000", pretext: "this is the pretext", text: "this is the text" }]
+    res.send "the form should follow next"
+    res.attach attachments
 
 #  
 #   robot.hear /I like pie/i, (res) ->
