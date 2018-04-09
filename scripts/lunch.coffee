@@ -326,9 +326,9 @@ module.exports = (robot) ->
       return
     #no one is allowed to vote more than once a day
     username = res.message.user.name
-    #if username in robot.brain.data.user_reviewed_today
-    #  res.send "You've already given a review for today."
-    #  return
+    if username in robot.brain.data.user_reviewed_today
+      res.send "You've already given a review for today."
+      return
     # send the review to the database
     place = res.match[1] or ''
     rating = res.match[2] or ''
