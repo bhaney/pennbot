@@ -62,7 +62,7 @@ class PlaceList
     else
       return false
 
-sendLocations = (res, alias, list) ->
+sendLocations = (alias, list) ->
   api_url = 'https://bots.bijanhaney.com/lunch/insert/alias'
   text = "I don't recognize the location **#{alias}** - is it another name for one of these below?"
   actions = []
@@ -83,8 +83,8 @@ sendLocations = (res, alias, list) ->
     integration: {url: 'https://bots.bijanhaney.com/lunch/insert/location'}
   }
   actions.push new_location
-  res.envelope['attachments'] = [{ text: text, actions: actions }]
-  return res.envelope
+  attachments = [{ text: text, actions: actions }]
+  return attachments
 
 insertReview = (robot, res, username, place, rating, comment) ->
   #get database token
@@ -123,8 +123,9 @@ insertReview = (robot, res, username, place, rating, comment) ->
               if result.success
                 robot.brain.data.user_reviewed_today.push username
                 if result.list?
-                  envelope = sendLocations(res, place, result.list)
-                  res.send envelope, "Thanks for your feedback! \n
+                  attachments = sendLocations(place, result.list)
+                  res.envelope['attachments'] = attachments
+                  res.send res.envelope, "Thanks for your feedback! \n
                             location: #{place} \n 
                             rating: #{rating} \n
                             comment: #{comment} \n"
