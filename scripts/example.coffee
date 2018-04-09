@@ -34,7 +34,8 @@ module.exports = (robot) ->
 
   robot.respond /test a form/i, (res) ->
     attachments = [{ fallback: "test", color: "#FF8000", pretext: "this is the pretext", text: "this is the text" }]
-    res.reading "test form"
+    #res.envelope['attachments'] = attachments
+    robot.send res.envelope, "test form"
 
 #  
 #   robot.hear /I like pie/i, (res) ->

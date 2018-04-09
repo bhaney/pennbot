@@ -62,6 +62,30 @@ class PlaceList
     else
       return false
 
+sendLocations = (res, alias, list) ->
+  api_url = 'https://bots.bijanhaney.com/lunch/insert/alias'
+  text = "I don't recognize the location **#{alias}** - is it another name for one of these below?"
+  actions = []
+  for i in list
+    alias_button = {
+      name: i,
+      integration: {
+        url: api_url,
+        context: {
+          alias: alias,
+          name: i
+        }
+      }
+    }
+    actions.push alias_button
+  new_location = {
+    name: 'None of these',
+    integration: {url: 'https://bots.bijanhaney.com/lunch/insert/location'}
+  }
+  actions.push new_location
+  res.envelope['attachments'] = [{ text: text, actions: actions }]
+  return res.envelope
+
 insertReview = (robot, res, username, place, rating, comment) ->
   #get database token
   database_token = process.env.HUBOT_LUNCH_TOKEN or null
@@ -89,7 +113,7 @@ insertReview = (robot, res, username, place, rating, comment) ->
           comment: comment
         })
         #now insert the info into the database
-        robot.http("https://bots.bijanhaney.com/lunch/insert")
+        robot.http("https://bots.bijanhaney.com/lunch/insert/review")
           .header('Content-Type', 'application/json')
           .post(data) (err, response, body) ->
             if err
@@ -98,12 +122,21 @@ insertReview = (robot, res, username, place, rating, comment) ->
               result = JSON.parse body
               if result.success
                 robot.brain.data.user_reviewed_today.push username
-                res.send "Thanks for your feedback! \n
-                          location: #{place} \n 
-                          rating: #{rating} \n
-                          comment: #{comment} \n"
+                if result.list?
+                  envelope = sendLocations(res, place, result.list)
+                  res.send envelope, "Thanks for your feedback! \n
+                            location: #{place} \n 
+                            rating: #{rating} \n
+                            comment: #{comment} \n"
+                else
+                  res.send "Thanks for your feedback! \n
+                            location: #{place} \n 
+                            rating: #{rating} \n
+                            comment: #{comment} \n"
               else
                 res.send "Was not able to commit review to database: \n #{result.text}"
+
+
 
 module.exports = (robot) ->
   NUM_VOTES = 4 #treshold of votes required to change lists
@@ -293,9 +326,9 @@ module.exports = (robot) ->
       return
     #no one is allowed to vote more than once a day
     username = res.message.user.name
-    if username in robot.brain.data.user_reviewed_today
-      res.send "You've already given a review for today."
-      return
+    #if username in robot.brain.data.user_reviewed_today
+    #  res.send "You've already given a review for today."
+    #  return
     # send the review to the database
     place = res.match[1] or ''
     rating = res.match[2] or ''
