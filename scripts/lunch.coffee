@@ -62,7 +62,7 @@ class PlaceList
     else
       return false
 
-sendLocations = (alias, list) ->
+sendLocations = (alias, list, review) ->
   api_url = 'https://bots.bijanhaney.com/lunch/insert/alias'
   text = "I don't recognize the location **#{alias}** - is it another name for one of these below?"
   actions = []
@@ -73,14 +73,20 @@ sendLocations = (alias, list) ->
         url: api_url,
         context: {
           alias: alias,
-          name: i
+          name: i,
+          review: review
         }
       }
     }
     actions.push alias_button
   new_location = {
     name: 'None of these',
-    integration: {url: 'https://bots.bijanhaney.com/lunch/insert/location'}
+    integration: {
+      url: 'https://bots.bijanhaney.com/lunch/unknown/location',
+      context: {
+        review: review
+      }
+    }
   }
   actions.push new_location
   attachments = [{ text: text, actions: actions }]
@@ -123,12 +129,13 @@ insertReview = (robot, res, username, place, rating, comment) ->
               if result.success
                 robot.brain.data.user_reviewed_today.push username
                 if result.list?
-                  attachments = sendLocations(place, result.list)
-                  res.envelope['attachments'] = attachments
-                  res.send res.envelope, "Thanks for your feedback! \n
+                  review = "Thanks for your feedback! \n
                             location: #{place} \n 
                             rating: #{rating} \n
                             comment: #{comment} \n"
+                  attachments = sendLocations(place, result.list, review)
+                  res.envelope['attachments'] = attachments
+                  res.send res.envelope, review
                 else
                   res.send "Thanks for your feedback! \n
                             location: #{place} \n 
