@@ -84,7 +84,8 @@ sendLocations = (alias, list, review) ->
     integration: {
       url: 'https://bots.bijanhaney.com/lunch/unknown/location',
       context: {
-        review: review
+        review: review,
+        alias: alias
       }
     }
   }
