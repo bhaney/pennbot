@@ -363,16 +363,7 @@ module.exports = (robot) ->
     insertReview(robot, res, username, place, rating, comment)
 
   robot.respond /lunch csv/i, (res) ->
-      robot.http("https://bots.bijanhaney.com/lunch/getcsv")
-        .get() (err, response, body) ->
-          if err
-            res.send "Encountered an error #{err}"
-          else
-            result = JSON.parse body
-            if result.success
-              res.send "Successfully generated CSV: #{result.text}"
-            else
-              res.send "#{result.text}"
+      res.send "https://bots.bijanhaney.com/lunch/"
 
   robot.respond /check lunch review/i, (res) ->
     #asking for lunch sets the suggested location in the row
