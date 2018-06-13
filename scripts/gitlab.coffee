@@ -15,11 +15,11 @@
 #   hubot add time <e.g. 3h30m> to <discussion-id> - Adds time spent on the discussion
 #   hubot show (my|user's) discussions - Show discussions assigned to you
 #   hubot list discussions - Show all of the discussions
-#   hubot add comment to <discussion-id> "<note>"  - Adds a comment to the discussion
+#   hubot comment on <discussion-id> "<note>"  - Adds a comment to the discussion
 #   hubot create discussion about "<subject>" resolution: "<note>"  - Add issue to specific project
 #   hubot show discussion <discussion-id> - print the discussion and its comments.
 #   hubot edit resolution <discussion-id> "<note>" - edit the resolution of the discussion
-#   hubot change priority of <discussion-id> to <1-9> - change the priority, with 9 being highest.
+#   hubot change priority of <discussion-id> to <0-9> - change the priority, with 9 being highest.
 #
 if process.env.HUBOT_GITLAB_SSL?
   HTTP = require('https')
@@ -85,7 +85,7 @@ module.exports = (robot) ->
 
           for issue in data
             do (issue) ->
-              _.push "\n [#{issue.iid}: #{issue.title}](#{gitlab.url}/issues/#{issue.iid}): **#{issue.title}** [#{issue.state} - priority: #{issue.weight}] "
+              _.push "\n [#{issue.iid}: **#{issue.title}**](#{gitlab.url}/issues/#{issue.iid}) [priority: #{issue.weight}] - **Resolution**: #{issue.description} "
 
           msg.send _.join "\n"
 
@@ -106,8 +106,8 @@ module.exports = (robot) ->
               _.push "\n [#{issue.iid}: **#{issue.title}**](#{gitlab.url}/issues/#{issue.iid}) [priority: #{issue.weight}] - **Resolution**: #{issue.description} "
           msg.send _.join "\n"
 
-  # Robot add comment to <discussion> "<note>"
-  robot.respond /add comment to (?:#)?(\d+) "([^"]+)"/i, (msg) ->
+  # Robot comment on <discussion> "<note>"
+  robot.respond /comment on (?:#)?(\d+) "([^"]+)"/i, (msg) ->
     [id, note] = msg.match[1..2]
 
     attributes =
@@ -174,11 +174,13 @@ module.exports = (robot) ->
               members.push participant.username
           comments = []
           for note in notes
-            do(note) ->
-              comments.push "On #{note.created_at}: \n #{note.body}"
+            unless note.system
+              dt = new Date note.created_at
+              comments.push "On #{dt.toLocaleString()} from #{note.author.username}: \n #{note.body}"
           _ = []
           _.push "\n [#{data.iid}: **#{data.title}**](#{data.web_url}) [#{data.state} - priority: #{data.weight}] "
-          _.push "Created on #{data.created_at}"
+          dt = new Date data.created_at
+          _.push "Created on #{dt.toLocaleString()}"
           _.push "Participants: #{members.join(', ')}"
           _.push "**Resolution**: #{data.description}"
           #comments
@@ -203,7 +205,7 @@ module.exports = (robot) ->
       else
         msg.send "Done! Edited resolution of [##{id}: #{data.title}](#{data.web_url}) to \"#{note}\""
 
-  # Robot change priority of <discussion-id> to <1-9>
+  # Robot change priority of <discussion-id> to <0-9>
   robot.respond /change priority of (\d+) to ([0-9])$/i, (msg) ->
     [id, priority] = msg.match[1..2]
 
@@ -285,6 +287,9 @@ class Gitlab
 
   Issue: (id) ->
 
+    add: (attributes, callback) =>
+      @post "/issues", attributes, callback
+
     show: (params, callback) =>
       @get "/issues/#{id}", params, callback
 
@@ -300,8 +305,12 @@ class Gitlab
     comment: (attributes, callback) =>
       @post "/issues/#{id}/notes", attributes, callback
 
+  Emoji: (id) ->
     add: (attributes, callback) =>
-      @post "/issues", attributes, callback
+      @post "/issues/#{id}/award_emoji", attributes, callback
+
+    show: (params, callback) =>
+      @get "/issues/#{id}/award_emoji", params, callback
 
   TimeEntry: (id) ->
 

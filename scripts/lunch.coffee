@@ -376,4 +376,4 @@ module.exports = (robot) ->
     if res.message.user.name == "Shell"
       res.send robot.brain.data.user_reviewed_today.join(', ')
     if (stored_day == today_date) and (robot.brain.data.user_reviewed_today.length < 2)
-      res.send "Please consider leaving a review about today's lunch. 'pennbot review lunch location:\"[food]\" rating:\"[1 - 10]\" comment:\"[optional]\"'. \n Log today's lunch discussion with 'pennbot create discussion about \"[subject]\" comment: \"[resolution]\"' "
+      res.send "Please consider leaving a review about today's lunch. 'pennbot review lunch location:\"[food]\" rating:\"[1 - 10]\" comment:\"[optional]\"'. \n Log today's lunch discussion with 'pennbot create discussion about \"[subject]\" resolution: \"[resolution]\"' "
