@@ -15,6 +15,7 @@
 #   hubot add time <e.g. 3h30m> to <discussion-id> - Adds time spent on the discussion
 #   hubot show (my|user's) discussions - Show discussions assigned to you
 #   hubot list discussions - Show all of the discussions
+#   hubot list resolved discussions - Show all of the closed discussions
 #   hubot comment on <discussion-id> "<note>"  - Adds a comment to the discussion
 #   hubot create discussion about "<subject>" resolution: "<note>"  - Add issue to specific project
 #   hubot show discussion <discussion-id> - print the discussion and its comments.
@@ -106,6 +107,23 @@ module.exports = (robot) ->
               _.push "\n [#{issue.iid}: **#{issue.title}**](#{gitlab.url}/issues/#{issue.iid}) [priority: #{issue.weight}] - **Resolution**: #{issue.description} "
           msg.send _.join "\n"
 
+  # Robot list resolved [gitlab] discussions
+  robot.respond /list resolved (?:gitlab )?discussions/i, (msg) ->
+      params =
+        "state": "closed"
+
+      gitlab.Issues params, (err, data) ->
+        if err?
+          msg.send "Couldn't get a list of discussions for you!"
+        else
+          _ = []
+          _.push "There are #{data.length} discussions."
+
+          for issue in data
+            do (issue) ->
+              _.push "\n [#{issue.iid}: **#{issue.title}**](#{gitlab.url}/issues/#{issue.iid}) [priority: #{issue.weight}] - **Resolution**: #{issue.description} "
+          msg.send _.join "\n"
+
   # Robot comment on <discussion> "<note>"
   robot.respond /comment on (?:#)?(\d+) "([^"]+)"/i, (msg) ->
     [id, note] = msg.match[1..2]
@@ -120,7 +138,7 @@ module.exports = (robot) ->
         else
           msg.send "Couldn't update this issue, sorry :("
       else
-        msg.send "Done! Added comment to [##{id}](#{gitlab.url}/issues/#{id}) \"#{note}\""
+        msg.send "Added comment to [##{id}](#{gitlab.url}/issues/#{id}) \"#{note}\""
 
   # Robot create discussion about "<subject>" resolution: "<note>"
   robot.respond /create (?:discussion )(?:\s*about\s*)"([^"]+)" resolution:\s*"([^"]+)"/i, (msg) ->
@@ -151,7 +169,7 @@ module.exports = (robot) ->
           if status2 == 404
             msg.send "Couldn't create this discussion, #{status2} :("
         if data2?
-          msg.send "Done! Added [#{data2.iid}: #{data2.title}](#{gitlab.url}/issues/#{data2.iid}) with resolution \"#{note}\""
+          msg.send "Added [#{data2.iid}: #{data2.title}](#{gitlab.url}/issues/#{data2.iid}) with resolution \"#{note}\""
 
   # Robot show discussion <discussion-id>
   robot.respond /show discussion (?:#)?(\d+)/i, (msg) ->
@@ -178,7 +196,7 @@ module.exports = (robot) ->
               dt = new Date note.created_at
               comments.push "On #{dt.toLocaleString()} from #{note.author.username}: \n #{note.body}"
           _ = []
-          _.push "\n [#{data.iid}: **#{data.title}**](#{data.web_url}) [#{data.state} - priority: #{data.weight}] "
+          _.push "\n [#{data.iid}: **#{data.title}**](#{data.web_url}) [priority: #{data.weight}] "
           dt = new Date data.created_at
           _.push "Created on #{dt.toLocaleString()}"
           _.push "Participants: #{members.join(', ')}"
@@ -203,7 +221,7 @@ module.exports = (robot) ->
         else
           msg.send "Couldn't update this issue, sorry :("
       else
-        msg.send "Done! Edited resolution of [##{id}: #{data.title}](#{data.web_url}) to \"#{note}\""
+        msg.send "Edited resolution of [##{id}: #{data.title}](#{data.web_url}) to \"#{note}\""
 
   # Robot change priority of <discussion-id> to <0-9>
   robot.respond /change priority of (\d+) to ([0-9])$/i, (msg) ->
@@ -219,7 +237,7 @@ module.exports = (robot) ->
         else
           msg.send "Couldn't update this issue, sorry :("
       else
-        msg.send "Done! Edited priority of [##{id}: #{data.title}](#{data.web_url}) to \"#{priority}\""
+        msg.send "Edited priority of [##{id}: #{data.title}](#{data.web_url}) to \"#{priority}\""
 
 
 
