@@ -13,6 +13,7 @@
     "hubot": "^2.3.0",
     "hubot-conversation": "^1.1.1",
     "hubot-mattermost": "../hubot-mattermost",
+    "hubot-redmine": "../hubot-redmine",
     "hubot-diagnostics": "0.0.2",
     "hubot-help": "^0.2.2",
     "hubot-heroku-keepalive": "^1.0.3",

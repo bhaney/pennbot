@@ -19,6 +19,9 @@ module.exports = (robot) ->
   robot.respond /thanks.*/i, (res) ->
     res.send res.random thanks
 
+  robot.respond /make (a |some )?coffee/i, (res) ->
+    res.send "# ☕ "
+
   robot.hear /(how do I fix you|where is your source|where do you live).*/i, (res) ->
     res.send 'https://github.com/bhaney/pennbot'
 

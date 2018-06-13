@@ -21,7 +21,7 @@ module.exports = (robot) ->
     cowtext = cow.say({
       text: res.match[1]
     })
-    res.send "```\n#{cowtext} ```"
+    res.send "``` \n#{cowtext} ```"
 
   robot.respond /list animals$/i, (res) ->
     res.send cows.join(', ')
@@ -32,7 +32,7 @@ module.exports = (robot) ->
       f: rando,
       text: res.match[1]
     })
-    res.send "```\n#{cowtext} ```"
+    res.send "``` \n#{cowtext} ```"
   
   animal_choices = (animal for animal in cows).sort().join('|')
   pattern = new RegExp("(#{animal_choices})say (.*)$", 'i')
@@ -42,4 +42,4 @@ module.exports = (robot) ->
       f: animal,
       text: res.match[2]
     })
-    res.send "```\n#{cowtext} ```"
+    res.send "``` \n#{cowtext} ```"

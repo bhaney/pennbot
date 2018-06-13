@@ -294,20 +294,22 @@ module.exports = (robot) ->
     #compare stored day with today's date
     stored_day = robot.brain.get('food_day')
     stored_food = robot.brain.get('food_rec')
+    today_food_rec = ''
     if stored_day == today_date
       res.send "I've already said "+stored_food
-    else if today == 1
-      today_food_rec = "HEP Lunch"
-      res.send today_food_rec
-      robot.brain.data.user_reviewed_today = []
-      robot.brain.set 'food_day', today_date
-      robot.brain.set 'food_rec', today_food_rec
+      return
+    else if today == 2
+      today_food_rec = "Old Nelson"
+    else if today == 3
+      today_food_rec = "Mexicali"
+    else if today == 4
+      today_food_rec = "Lovash"
     else
-      robot.brain.data.user_reviewed_today = []
       today_food_rec = res.random food_list.list()
-      res.send today_food_rec
-      robot.brain.set 'food_day', today_date
-      robot.brain.set 'food_rec', today_food_rec
+    res.send today_food_rec
+    robot.brain.data.user_reviewed_today = []
+    robot.brain.set 'food_day', today_date
+    robot.brain.set 'food_rec', today_food_rec
 
   robot.respond /what('s|s| is) for (second|2nd) lunch.*/i, (res) ->
     food_list = new PlaceList(robot.brain.data.food_list)
@@ -374,4 +376,4 @@ module.exports = (robot) ->
     if res.message.user.name == "Shell"
       res.send robot.brain.data.user_reviewed_today.join(', ')
     if (stored_day == today_date) and (robot.brain.data.user_reviewed_today.length < 2)
-      res.send "Please consider leaving a review about today's lunch. 'pennbot review lunch location:\"[food]\" rating:\"[1 - 10]\" comment:\"[optional]\"' "
+      res.send "Please consider leaving a review about today's lunch. 'pennbot review lunch location:\"[food]\" rating:\"[1 - 10]\" comment:\"[optional]\"'. \n Log today's lunch discussion with 'pennbot create discussion about \"[subject]\" comment: \"[resolution]\"' "
