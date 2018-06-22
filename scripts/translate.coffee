@@ -2,8 +2,8 @@
 #   Allows Hubot to know many languages.
 #
 # Commands:
-#   hubot translate <phrase> - Searches for a translation for the <phrase> and then prints that bad boy out.
-#   hubot translate from <source> to <target> <phrase> - Translates <phrase> from <source> into <target>. Both <source> and <target> are optional
+#   hubot translate <phrase> - Searches for a translation for the <phrase>.
+#   hubot translate from <source> to <target> <phrase> - Translates <phrase> from <source> into <target>.
 #
 #author:
 #   https://github.com/hubot-scripts/hubot-google-translate

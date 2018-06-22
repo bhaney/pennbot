@@ -100,13 +100,13 @@ module.exports = (robot) ->
   robot.brain.on 'loaded', =>
     syncJobs robot
 
-  robot.respond /(?:new|add) job\s?(act\w*)? "([*0-9\s\-]+)" (.*)$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(act\w*)? "([*0-9\s\-,]+)" (.*)$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
-  robot.respond /(?:new|add) job\s?(act\w*)? ([*0-9\s\-]+) "(.*?)" *$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(act\w*)? ([*0-9\s\-,]+) "(.*?)" *$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
-  robot.respond /(?:new|add) job\s?(act\w*)? ([*0-9\s\-]+) say (.*?) *$/i, (msg) ->
+  robot.respond /(?:new|add) job\s?(act\w*)? ([*0-9\s\-,]+) say (.*?) *$/i, (msg) ->
     handleNewJob robot, msg, msg.match[2], msg.match[3], msg.match[1]
 
   robot.respond /(?:list|ls) jobs?/i, (msg) ->
