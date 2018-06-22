@@ -1,7 +1,6 @@
 #
 #Commands:
 #   hubot r1/r2/r3 menu <day> - Gives the R1/R2/R3 lunch menu for the given day
-#   hubot r1/r2/r3 (menu1, menu2,pizza, etc) <day> - Gives the R1/R2/R3 menu for a specific dish.
 
 translate = require('google-translate-api')
 

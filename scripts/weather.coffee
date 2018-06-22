@@ -9,7 +9,7 @@
 #   HUBOT_WEATHER_UNITS: optional, 'imperial' or 'metric'
 #
 # Commands:
-#   hubot weather (in <city>) - Show today forecast for interested city. Defaults to Philadelphia.
+#   hubot weather (in <city>) - Shows weather for <city>
 #
 # Author:
 #   skibish

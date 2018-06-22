@@ -1,5 +1,6 @@
 # Description:
 #   Showing of gitlab issuess via the REST API.
+#   based on redmine API by @robhurring https://github.com/robhurring/hubot-redmine
 #
 # Dependencies:
 #   None
@@ -238,48 +239,6 @@ module.exports = (robot) ->
           msg.send "Couldn't update this issue, sorry :("
       else
         msg.send "Edited priority of [##{id}: #{data.title}](#{data.web_url}) to \"#{priority}\""
-
-
-
-# simple ghetto fab date formatter this should definitely be replaced, but didn't want to
-# introduce dependencies this early
-#
-# dateStamp - any string that can initialize a date
-# fmt - format string that may use the following elements
-#       mm - month
-#       dd - day
-#       yyyy - full year
-#       hh - hours
-#       ii - minutes
-#       ss - seconds
-#       ap - am / pm
-#
-# returns the formatted date
-formatDate = (dateStamp, fmt = 'mm/dd/yyyy at hh:ii ap') ->
-  d = new Date(dateStamp)
-
-  # split up the date
-  [m,d,y,h,i,s,ap] =
-    [d.getMonth() + 1, d.getDate(), d.getFullYear(), d.getHours(), d.getMinutes(), d.getSeconds(), 'AM']
-
-  # leadig 0s
-  i = "0#{i}" if i < 10
-  s = "0#{s}" if s < 10
-
-  # adjust hours
-  if h > 12
-    h = h - 12
-    ap = "PM"
-
-  # ghetto fab!
-  fmt
-    .replace(/mm/, m)
-    .replace(/dd/, d)
-    .replace(/yyyy/, y)
-    .replace(/hh/, h)
-    .replace(/ii/, i)
-    .replace(/ss/, s)
-    .replace(/ap/, ap)
 
 
 # Gitlab API Mapping
