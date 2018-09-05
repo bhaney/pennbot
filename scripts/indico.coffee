@@ -18,13 +18,18 @@ announceMeeting = (robot, res, category) ->
       res.send "Encountered an error!"
       return
     output = JSON.parse body
-    if output["date"] != ''
+    if output['date'] != ''
+      now = new Date()
       meeting_time = new Date(output["date"])
       #difference in seconds
-      difference = Math.floor((meeting_time - Date.now())/1000)
-      #announce meeting between 2 and 31 minutes before the start
-      if (difference > 120) and (difference < 1860)
-        minute_diff = Math.floor(difference/60)
+      difference = Math.floor((meeting_time - now)/1000)
+      #difference in minutes
+      minute_diff = Math.ceil(difference/60)
+      # testing strings
+      #res.send output["date"]
+      #res.send "time now is #{now.toLocaleString()}\nmeeting time is #{meeting_time.toLocaleString()}\nMeeting in #{minute_diff} minutes."
+      #announce meeting between 1 and 31 minutes before the start
+      if (difference > 60) and (difference < 1860)
         res.send "Meeting in #{minute_diff} minutes.\n#{output['body']}"
 
 module.exports = (robot) ->

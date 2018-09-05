@@ -10,6 +10,59 @@
 #   hubot aurelius - Receive wisdom from ancient Rome's preeminent Stoic.
 
 quotes = {
+  "Epictetus": ["No thing great is created suddenly, any more than a bunch of grapes or a fig. If you tell me that you desire a fig, I answer you that there must be time. Let it first blossom, then bear fruit, then ripen.",
+                "If anyone tells you that a certain person speaks ill of you, do not make excuses about what is said of you but answer, 'He was ignorant of my other faults, else he would not have mentioned these alone.'",
+                 "Wealth consists not in having great possessions, but in having few wants.",
+                  "Don't explain your philosophy. Embody it.",
+                  "There is only one way to happiness and that is to cease worrying about things which are beyond the power or our will.",
+                  "Man is not worried by real problems so much as by his imagined anxieties about real problems",
+                  "First say to yourself what you would be; and then do what you have to do.",
+                  "If you want to improve, be content to be thought foolish and stupid.",
+                  "The key is to keep company only with people who uplift you, whose presence calls forth your best.",
+                  "Other people's views and troubles can be contagious. Don't sabotage yourself by unwittingly adopting negative, unproductive attitudes through your associations with others.",
+                  "It is impossible for a man to learn what he thinks he already knows.",
+                  "You are a little soul carrying around a corpse.",
+                  "He is a wise man who does not grieve for the things which he has not, but rejoices for those which he has.",
+                  "Caretake this moment. Immerse yourself in its particulars. Respond to this person, this challenge, this deed. Quit evasions. Stop giving yourself needless trouble. It is time to really live; to fully inhabit the situation you happen to be in now.",
+                   "Remember, it is not enough to be hit or insulted to be harmed, you must believe that you are being harmed. If someone succeeds in provoking you, realize that your mind is complicit in the provocation. Which is why it is essential that we not respond impulsively to impressions; take a moment before reacting, and you will find it easier to maintain control.",
+                  "Most of what passes for legitimate entertainment is inferior or foolish and only caters to or exploits people's weaknesses. Avoid being one of the mob who indulges in such pastimes. Your life is too short and you have important things to do. Be discriminating about what images and ideas you permit into your mind. If you yourself don't choose what thoughts and images you expose yourself to, someone else will, and their motives may not be the highest. It is the easiest thing in the world to slide imperceptibly into vulgarity. But there's no need for that to happen if you determine not to waste your time and attention on mindless pap.",
+                  "Preach not to others what they should eat, but eat as becomes you and be silent.",
+                   "If you would be a reader, read; if a writer, write.",
+                   "Now is the time to get serious about living your ideals. How long can you afford to put off who you really want to be? Your nobler self cannot wait any longer. Put your principles into practice – now. Stop the excuses and the procrastination. This is your life! You aren’t a child anymore. The sooner you set yourself to your spiritual program, the happier you will be. The longer you wait, the more you’ll be vulnerable to mediocrity and feel filled with shame and regret, because you know you are capable of better. From this instant on, vow to stop disappointing yourself. Separate yourself from the mob. Decide to be extraordinary and do what you need to do – now.",
+                   "Remember that you ought to behave in life as you would at a banquet. As something is being passed around it comes to you; stretch out your hand, take a portion of it politely. It passes on; do not detain it. Or it has not come to you yet; do not project your desire to meet it, but wait until it comes in front of you. So act toward children, so toward a wife, so toward office, so toward wealth.",
+                   "Difficulty shows what men are. Therefore when a difficulty falls upon you, remember that God, like a trainer of wrestlers, has matched you with a rough young man. Why? So that you may become an Olympic conqueror; but it is not accomplished without sweat.",
+                   "Some things are in our control and others not. Things in our control are opinion, pursuit, desire, aversion, and, in a word, whatever are our own actions. Things not in our control are body, property, reputation, command, and, in one word, whatever are not our actions. The things in our control are by nature free, unrestrained, unhindered; but those not in our control are weak, slavish, restrained, belonging to others. Remember, then, that if you suppose that things which are slavish by nature are also free, and that what belongs to others is your own, then you will be hindered. You will lament, you will be disturbed, and you will find fault both with gods and men. But if you suppose that only to be your own which is your own, and what belongs to others such as it really is, then no one will ever compel you or restrain you. Further, you will find fault with no one or accuse no one. You will do nothing against your will.",
+                   "If you would cure anger, do not feed it. Say to yourself: 'I used to be angry every day; then every other day; now only every third or fourth day.' When you reach thirty days offer a sacrifice of thanksgiving to the gods.",
+                    "These reasonings are unconnected: 'I am richer than you, therefore I am better'; 'I am more eloquent than you, therefore I am better.' The connection is rather this: 'I am richer than you, therefore my property is greater than yours;' 'I am more eloquent than you, therefore my style is better than yours' But you, after all, are neither property nor style.",
+                     "So you wish to conquer in the Olympic Games, my friend? And I, too... But first mark the conditions and the consequences. You will have to put yourself under discipline; to eat by rule, to avoid cakes and sweetmeats; to take exercise at the appointed hour whether you like it or not, in cold and heat; to abstain from cold drinks and wine at your will. Then, in the conflict itself you are likely enough to dislocate your wrist or twist your ankle, to swallow a great deal of dust, to be severely thrashed, and after all of these things, to be defeated.",
+                     "Never depend on the admiration of others. There is no strength in it. Personal merit cannot be derived from an external source. It is not to be found in your personal associations, nor can it be found in the regard of other people. It is a fact of life that other people, even people who love you, will not necessarily agree with your ideas, understand you, or share your enthusiasms. Grow up! Who cares what other people think about you!"],
+  "Seneca": ["There is no easy way from the earth to the stars",
+             "As is a tale, so is life: not how long it is, but how good it is, is what matters.",
+             "The time will come when diligent research over long periods will bring to light things which now lie hidden. A single lifetime, even though entirely devoted to the sky, would not be enough for the investigation of so vast a subject... And so this knowledge will be unfolded only through long successive ages. There will come a time when our descendants will be amazed that we did not know things that are so plain to them... Many discoveries are reserved for ages still to come, when memory of us will have been effaced.",
+              "We suffer more often in imagination than in reality",
+              "You act like mortals in all that you fear, and like immortals in all that you desire",
+              "Life is long, if you know how to use it.",
+              "If a man knows not to which port he sails, no wind is favorable.",
+              "It is not that we have so little time but that we lose so much. The life we receive is not short but we make it so; we are not ill provided but use what we have wastefully",
+              "Begin at once to live, and count each separate day as a separate life.",
+              "No man was ever wise by chance.",
+              "They lose the day in expectation of the night, and the night in fear of the dawn.",
+              "I shall never be ashamed of citing a bad author if the line is good.",
+              "Associate with people who are likely to improve you.",
+              "He suffers more than necessary, who suffers before it is necessary.",
+              "Until we have begun to go without them, we fail to realize how unnecessary many things are. We've been using them not because we needed them but because we had them.",
+              "Enjoy present pleasures in such a way as not to injure future ones.",
+              "Putting things off is the biggest waste of life: it snatches away each day as it comes, and denies us the present by promising the future. The greatest obstacle to living is expectancy, which hangs upon tomorrow, and loses today. You are arranging what lies in Fortune's control, and abandoning what lies in yours. What are you looking at? To what goal are you straining? The whole future lies in uncertainty: live immediately.",
+              "As long as you live, keep learning how to live.",
+              "We should every night call ourselves to an account;  What infirmity have I mastered today? What passions opposed? What temptation resisted? What virtue acquired? Our vices will abort of themselves if they be brought every day to the shrift.",
+              "People are frugal in guarding their personal property; but as soon as it comes to squandering time they are most wasteful of the one thing in which it is right to be stingy.",
+              "While we wait for life, life passes.",
+              "You live as if you were destined to live forever, no thought of your frailty ever enters your head, of how much time has already gone by you take no heed. You squander time as if you drew from a full and abundant supply, though all the while that day which you bestow on some person or thing is perhaps your last.",
+              "But life is very short and anxious for those who forget the past, neglect the present, and fear the future.",
+              "The part of life we really live is small. For all the rest of existence is not life, but merely time.",
+               "Nothing is burdensome if taken lightly, and nothing need arouse one's irritation so long as one doesn't make it bigger than it is by getting irritated.",
+               "What man can you show me who places any value on his time, who reckons the worth of each day, who understands that he is dying daily? For we are mistaken when we look forward to death; the major portion of death has already passed, Whatever years be behind us are in death's hands.",
+               "The final hour when we cease to exist does not itself bring death; it merely of itself completes the death-process. We reach death at that moment, but we have been a long time on the way."],
   "Marcus Aurelius": ["People out for posthumous fame forget that the Generations To Come will be the same annoying people they know now. And just as mortal. What does it matter to you if they say x about you, or think y? Give yourself a gift: the present moment.",
                       "An arrow has one motion and the mind another. Even when pausing, even when weighing conclusions, the mind is moving forward, toward its goal.",
                       "Today I escaped from anxiety. Or no, I discarded it, because it was within me, in my own perceptions--not outside.",
@@ -64,20 +117,20 @@ quotes = {
 
 module.exports = (robot) ->
   #initialize variable in brain if doesn't exist
-  robot.brain.data.aurelius_quotes ?= []
+  robot.brain.data.stoic_quotes ?= []
 
   robot.respond /aurelius/i, (res) ->
-    aurelius_quotes = robot.brain.data.aurelius_quotes
-    author = "Marcus Aurelius"
+    stoic_quotes = robot.brain.data.stoic_quotes
     #if quotes list is empty, re-fill it
-    if aurelius_quotes.length == 0
-      aurelius_quotes = quotes[author]
+    if stoic_quotes.length == 0
+      for k,v of quotes
+        stoic_quotes.push [k,q] for q in v
     #pick a random quote by marcus aurelius
-    picked_quote = res.random aurelius_quotes
-    res.send "> #{picked_quote} \n - *#{author}*"
+    picked_quote = res.random stoic_quotes
+    res.send "> #{picked_quote[1]} \n - *#{picked_quote[0]}*"
     #delete that quote from the list to keep repeats from happening
-    i = aurelius_quotes.indexOf(picked_quote)
+    i = stoic_quotes.indexOf(picked_quote)
     if i != -1
-      aurelius_quotes.splice(i, 1)
-    robot.brain.data.aurelius_quotes = aurelius_quotes
+      stoic_quotes.splice(i, 1)
+    robot.brain.data.stoic_quotes = stoic_quotes
 
