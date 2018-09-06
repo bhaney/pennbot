@@ -13,7 +13,8 @@ cows = ['cheese','bunny','dragon','elephant',
         'flaming-sheep','goat','ghostbusters','hedgehog',
         'kitty', 'mech-and-cow','moose',
         'sheep','small','squirrel','stegosaurus',
-        'turtle','whale']
+        'turtle','whale','elephant-in-snake','moofasa',
+        'skeleton','turkey','tux']
 
 module.exports = (robot) ->
 
