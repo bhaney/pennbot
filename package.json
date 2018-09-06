@@ -7,7 +7,7 @@
   "dependencies": {
     "chrono-node": "^0.1.10",
     "coffee-script": "^1.12.6",
-    "cowsay": "^1.3.0",
+    "cowsay": "../cowsay",
     "cron": ">= 1.0.1",
     "google-translate-api": "^2.3.0",
     "hubot": "^2.3.0",
