@@ -9,12 +9,12 @@
 #
 
 cow = require('cowsay')
-cows = ['cheese','bunny','dragon','elephant',
+cows = ['cheese','bunny','dragon','elephant','mule','octopus',
         'flaming-sheep','goat','ghostbusters','hedgehog',
-        'kitty', 'mech-and-cow','moose','khilesh',
-        'sheep','small','squirrel','stegosaurus',
-        'turtle','whale','elephant-in-snake','moofasa',
-        'skeleton','turkey','tux','mail']
+        'kitty', 'mech-and-cow','moose','khilesh','lobster',
+        'sheep','small','squirrel','stegosaurus','bees',
+        'turtle','whale','elephant-in-snake','moofasa','owl',
+        'skeleton','turkey','tux','mail','cat', 'armadillo']
 
 module.exports = (robot) ->
 
