@@ -298,6 +298,8 @@ module.exports = (robot) ->
     if stored_day == today_date
       res.send "I've already said "+stored_food
       return
+    else if today == 1
+      today_food_rec = "HEP Lunch"
     else if today == 2
       today_food_rec = "Old Nelson"
     else if today == 3
