@@ -12,7 +12,7 @@ cow = require('cowsay')
 cows = ['cheese','bunny','dragon','elephant','mule','octopus',
         'flaming-sheep','goat','ghostbusters','hedgehog',
         'kitty', 'mech-and-cow','moose','khilesh','lobster',
-        'sheep','small','squirrel','stegosaurus','bees',
+        'sheep','small','squirrel','stegosaurus','bees','bijan',
         'turtle','whale','elephant-in-snake','moofasa','owl',
         'skeleton','turkey','tux','mail','cat', 'armadillo']
 
