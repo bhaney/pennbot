@@ -14,7 +14,7 @@ cows = ['cheese','bunny','dragon','elephant','mule','octopus',
         'kitty', 'mech-and-cow','moose','khilesh','lobster',
         'sheep','small','squirrel','stegosaurus','bees','bijan',
         'turtle','whale','elephant-in-snake','moofasa','owl',
-        'skeleton','turkey','tux','mail','cat', 'armadillo']
+        'skeleton','turkey','tux','mail','cat', 'armadillo','shrek']
 
 module.exports = (robot) ->
 
