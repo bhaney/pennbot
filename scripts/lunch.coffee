@@ -300,13 +300,14 @@ module.exports = (robot) ->
       return
     else if today == 1
       today_food_rec = "HEP Lunch"
-    else if today == 2
-      today_food_rec = "Old Nelson"
-    else if today == 3
-      today_food_rec = "Mexicali"
-    else if today == 4
-      today_food_rec = "Lovash"
     else
+      # if today == 2
+      #  today_food_rec = "Old Nelson"
+      # else if today == 3
+      #  today_food_rec = "Mexicali"
+      #else if today == 4
+      #  today_food_rec = "Lovash"
+      # else
       today_food_rec = res.random food_list.list()
     res.send today_food_rec
     robot.brain.data.user_reviewed_today = []
