@@ -11,7 +11,6 @@
 
 quotes = {
   "Epictetus": ["No thing great is created suddenly, any more than a bunch of grapes or a fig. If you tell me that you desire a fig, I answer you that there must be time. Let it first blossom, then bear fruit, then ripen.",
-                "If anyone tells you that a certain person speaks ill of you, do not make excuses about what is said of you but answer, 'He was ignorant of my other faults, else he would not have mentioned these alone.'",
                  "Wealth consists not in having great possessions, but in having few wants.",
                   "Don't explain your philosophy. Embody it.",
                   "There is only one way to happiness and that is to cease worrying about things which are beyond the power or our will.",

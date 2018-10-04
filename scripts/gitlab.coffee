@@ -105,7 +105,7 @@ module.exports = (robot) ->
 
           for issue in data
             do (issue) ->
-              _.push "\n [#{issue.iid}: **#{issue.title}**](#{gitlab.url}/issues/#{issue.iid}) [priority: #{issue.weight}] - **Resolution**: #{issue.description} "
+              _.push "\n [#{issue.iid}: **#{issue.title}**](#{gitlab.url}/issues/#{issue.iid}) - **Resolution**: #{issue.description} "
           msg.send _.join "\n"
 
   # Robot list resolved [gitlab] discussions
