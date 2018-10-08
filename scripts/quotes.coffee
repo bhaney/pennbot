@@ -114,11 +114,29 @@ quotes = {
                       "Don't be irritated at people's smell or bad breath. What's the point? With that mouth, with those armpits, they’re going to produce that odor. 'But they have a brain! Can’t they figure it out? Can’t they recognize the problem?' So you have a brain as well. Good for you. Then use your logic to awaken his. Show him. Make him realize it. If he'll listen, then you'll have solved the problem. Without anger."]
 }
 
+fs = require 'fs'
+
 module.exports = (robot) ->
   #initialize variable in brain if doesn't exist
   robot.brain.data.stoic_quotes ?= []
+  robot.brain.data.aurelius_meditations ?= 0
 
   robot.respond /aurelius/i, (res) ->
+    quote_number = robot.brain.data.aurelius_meditations
+    #if we've reach the end of the book, start over.
+    if quote_number >= 466
+        quote_number = 0
+    #read the text from the file
+    text_file = __dirname+"/meditations/#{quote_number}.txt"
+    fs.readFile text_file, "utf8", (err, contents) ->
+      if err
+        res.send "#{err} \n > If someone can prove me wrong and show me my mistake in any thought or action, I shall gladly change. I seek the truth, which never harmed anyone: the harm is to persist in one's own self-deception and ignorance.  \n - *Marcus Aurelius*"
+      else
+        res.send "> #{contents} \n\n - *Marcus Aurelius*"
+    #increase the text file
+    robot.brain.data.aurelius_meditations = quote_number+1
+
+  robot.respond /stoicquotes/i, (res) ->
     stoic_quotes = robot.brain.data.stoic_quotes
     #if quotes list is empty, re-fill it
     if stoic_quotes.length == 0
