@@ -26,7 +26,7 @@ showMenu = (robot, res, restaurant, day, english) ->
   #robot.http("https://r1d2.herokuapp.com/#{restaurant}/#{day}/").get() (err, resp, body) ->
   robot.http("https://bots.bijanhaney.com/r1d2/#{restaurant}/#{day}/").get() (err, resp, body) ->
     if err
-      res.send "Encountered an error!"
+      res.send "Encountered an error in r1d2: #{err}"
       return
     output = JSON.parse body
     menu = output["menu"]
@@ -50,7 +50,7 @@ showSingleMenu = (robot, res, restaurant, day, type, english) ->
   #robot.http("https://r1d2.herokuapp.com/#{restaurant}/#{day}/").get() (err, resp, body) ->
   robot.http("https://bots.bijanhaney.com/r1d2/#{restaurant}/#{day}/#{type}/").get() (err, resp, body) ->
     if err
-      res.send "Encountered an error!"
+      res.send "Encountered an error in r1d2: #{err}"
       return
     output = JSON.parse body
     menu = output["menu"]

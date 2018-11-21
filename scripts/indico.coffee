@@ -5,7 +5,7 @@
 nextMeeting = (robot, res, category) ->
   robot.http("https://bots.bijanhaney.com/indico/next/#{category}").get() (err, resp, body) ->
     if err
-      res.send "Encountered an error!"
+      res.send "Encountered an error in pyindico: #{err}"
       return
     output = JSON.parse body
     result = output["body"]
@@ -15,7 +15,7 @@ nextMeeting = (robot, res, category) ->
 announceMeeting = (robot, res, category) ->
   robot.http("https://bots.bijanhaney.com/indico/next/#{category}").get() (err, resp, body) ->
     if err
-      res.send "Encountered an error!"
+      res.send "Encountered an error in pyindico: #{err}"
       return
     output = JSON.parse body
     if output['date'] != ''

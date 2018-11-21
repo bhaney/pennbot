@@ -7,7 +7,7 @@ plotRatings = (username, res) ->
   res.http("https://bots.bijanhaney.com/lunch/plot/ratings?username=#{username}")
     .get() (err, response, body) ->
       if err
-        res.send "Encountered an error #{err}"
+        res.send "Encountered an error in lunchDB: #{err}"
       else
         result = JSON.parse body
         res.send result.text

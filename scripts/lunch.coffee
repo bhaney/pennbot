@@ -102,7 +102,7 @@ insertReview = (robot, res, username, place, rating, comment) ->
     .header('Accept', 'application/json')
     .get() (w_err, w_res, w_body) ->
       if w_err
-        res.send "Encountered an error \n `#{w_err}`"
+        res.send "Encountered an error in weatherAPI \n `#{w_err}`"
       else
         w_data = JSON.parse(w_body)
         if w_data.message
@@ -124,7 +124,7 @@ insertReview = (robot, res, username, place, rating, comment) ->
           .header('Content-Type', 'application/json')
           .post(data) (err, response, body) ->
             if err
-              res.send "Encountered an error `#{err}`"
+              res.send "Encountered an error in lunchDB `#{err}`"
             else
               result = JSON.parse body
               if result.success
